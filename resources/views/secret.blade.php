@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>A Note For You</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -31,15 +31,29 @@
 
     <style>
         [v-cloak] { display: none; }
-        body {
+
+        /* Lock scrolling completely on mobile */
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden !important;
+            overscroll-behavior: none !important;
+            touch-action: pan-x pinch-zoom;
             background-color: #f6f4ef;
             color: #2b2623;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Clean Luxury Stationery Card (Desktop & Tablet only; borderless on mobile) */
+        /* Allow natural document scrolling on desktop & tablet */
         @media (min-width: 640px) {
+            html, body {
+                height: auto;
+                min-height: 100vh;
+                overflow: auto !important;
+                touch-action: auto;
+            }
+
             .stationery-card {
                 background: #ffffff;
                 border: 1px solid #ebdcd0;
@@ -80,27 +94,27 @@
 
         /* Smooth step transition */
         .step-fade-enter-active, .step-fade-leave-active {
-            transition: opacity 0.22s ease, transform 0.22s ease;
+            transition: opacity 0.2s ease, transform 0.2s ease;
         }
         .step-fade-enter-from {
             opacity: 0;
-            transform: translateY(6px);
+            transform: translateY(4px);
         }
         .step-fade-leave-to {
             opacity: 0;
-            transform: translateY(-6px);
+            transform: translateY(-4px);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-center sm:items-center p-0 sm:p-6 md:p-10 selection:bg-stone-200 selection:text-stone-900">
+<body class="h-full h-[100dvh] sm:h-auto sm:min-h-screen flex flex-col justify-between sm:justify-center sm:items-center p-0 sm:p-6 md:p-10 selection:bg-stone-200 selection:text-stone-900 overflow-hidden sm:overflow-auto">
 
-    <!-- Main Container: Seamless borderless page on mobile; Elegant stationery card on tablet/desktop -->
-    <main id="app" v-cloak class="w-full max-w-full sm:max-w-[430px] md:max-w-[460px] mx-auto min-h-screen sm:min-h-0 flex flex-col justify-center px-6 py-8 sm:p-0 transition-all duration-300">
+    <!-- Main Container: 100dvh on mobile without scroll; elegant stationery card on desktop -->
+    <main id="app" v-cloak class="w-full max-w-full sm:max-w-[430px] md:max-w-[460px] mx-auto h-full h-[100dvh] sm:h-auto sm:my-auto flex flex-col justify-between px-6 py-6 sm:p-0 transition-all duration-300 overflow-hidden sm:overflow-visible">
 
         <!-- ============================================== -->
         <!-- STATE: NOTE DESTROYED / CLOSED                 -->
         <!-- ============================================== -->
-        <div v-if="isDestroyed" class="stationery-card sm:rounded-3xl p-6 sm:p-10 text-center my-auto">
+        <div v-if="isDestroyed" class="stationery-card sm:rounded-3xl p-6 sm:p-10 text-center my-auto flex-1 sm:flex-initial flex flex-col justify-center items-center">
             <div class="text-[11px] uppercase tracking-widest text-stone-600 font-medium mb-4">
                 Private Note
             </div>
@@ -116,219 +130,223 @@
         <!-- ============================================== -->
         <!-- STATE: ACTIVE PERSONAL MEMO                    -->
         <!-- ============================================== -->
-        <article v-else class="stationery-card sm:rounded-3xl p-0 sm:p-8 md:p-9 relative flex flex-col justify-between my-auto">
+        <article v-else class="stationery-card sm:rounded-3xl p-0 sm:p-8 md:p-9 relative flex flex-col justify-between h-full sm:h-auto flex-1 sm:flex-initial overflow-hidden sm:overflow-visible">
 
-            <!-- Top Memo Header: Clean & Balanced -->
-            <header class="flex items-center justify-between pb-4 mb-6 sm:mb-7 stationery-line text-[11px] text-stone-600 tracking-wider">
+            <!-- Top Memo Header -->
+            <header class="flex items-center justify-between pb-3.5 mb-4 sm:mb-7 stationery-line text-[11px] text-stone-600 tracking-wider shrink-0">
                 <span class="font-medium uppercase">Personal Note</span>
                 <span class="text-stone-600">@{{ currentDate }}</span>
             </header>
 
             <!-- Step Content Container with Smooth Animation -->
-            <transition name="step-fade" mode="out-in">
+            <div class="flex-1 flex flex-col justify-between overflow-hidden">
+                <transition name="step-fade" mode="out-in">
 
-                <!-- ------------------------------------------ -->
-                <!-- PAGE 1: THE INTRO NOTE                     -->
-                <!-- ------------------------------------------ -->
-                <div v-if="currentStep === 1" key="step1" class="flex flex-col justify-between">
-                    <!-- Body Text -->
-                    <div class="space-y-4 text-[13.5px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light">
-                        <p class="font-serif text-2xl sm:text-3xl font-semibold text-stone-900 tracking-tight mb-2">
-                            Hey,
-                        </p>
-
-                        <p>
-                            I know this is a bit out of nowhere, but I've noticed you around the room and just wanted to introduce myself.
-                        </p>
-
-                        <p>
-                            You always look focused, and I didn't want to awkwardly interrupt you while you were busy, so I thought leaving this was simpler.
-                        </p>
-                    </div>
-
-                    <!-- Footer Action Area: Plenty of breathing room, zero cramped lines -->
-                    <div class="pt-8 sm:pt-10 mt-6 sm:mt-8 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                        <span class="text-[11px] text-stone-600 font-light hidden sm:inline">
-                            A small hello
-                        </span>
-                        <button 
-                            @click="goToStep(2)"
-                            class="w-full sm:w-auto btn-dark py-3 sm:py-2.5 px-6 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.98] shadow-xs">
-                            <span>Continue</span>
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-
-                <!-- ------------------------------------------ -->
-                <!-- PAGE 2: THE GENTLE ASK / VIBE CHECK        -->
-                <!-- ------------------------------------------ -->
-                <div v-else-if="currentStep === 2" key="step2" class="flex flex-col justify-between">
-                    <!-- Body Text -->
-                    <div class="space-y-4 text-[13.5px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light">
-                        <p>
-                            If you're open to getting coffee or just chatting sometime, I'd love to say hi properly.
-                        </p>
-
-                        <p class="text-xs text-stone-600 pt-1">
-                            Before that though, just to make sure I'm not overstepping:
-                        </p>
-
-                        <!-- Question & Choices Flowing Seamlessly -->
-                        <div class="space-y-3 pt-2">
-                            <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 text-center sm:text-left">
-                                Are you seeing anyone?
+                    <!-- ------------------------------------------ -->
+                    <!-- PAGE 1: THE INTRO NOTE                     -->
+                    <!-- ------------------------------------------ -->
+                    <div v-if="currentStep === 1" key="step1" class="flex flex-col justify-between h-full flex-1">
+                        <!-- Body Text Centered in Viewport -->
+                        <div class="space-y-4 text-[14px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light my-auto">
+                            <p class="font-serif text-2xl sm:text-3xl font-semibold text-stone-900 tracking-tight mb-2">
+                                Hey,
                             </p>
-                            <div class="grid grid-cols-2 gap-3 pt-1">
-                                <button 
-                                    @click="selectChoice('single')"
-                                    :disabled="isSubmitting"
-                                    class="btn-choice py-3 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
-                                    Single :)
-                                </button>
-                                <button 
-                                    @click="selectChoice('taken')"
-                                    :disabled="isSubmitting"
-                                    class="btn-choice py-3 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
-                                    Seeing someone
-                                </button>
-                            </div>
-                        </div>
 
-                        <p class="text-[11px] text-stone-600 italic text-center sm:text-left pt-1">
-                            (No worries either way, whichever is true for you!)
-                        </p>
-                    </div>
-
-                    <!-- Footer Action Area -->
-                    <div class="pt-6 sm:pt-8 mt-6 sm:mt-8 border-t border-stone-100 flex items-center justify-between">
-                        <button 
-                            @click="goToStep(1)"
-                            class="text-xs text-stone-600 hover:text-stone-700 py-1.5 flex items-center gap-1.5 transition-colors">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                            </svg>
-                            <span>Read previous</span>
-                        </button>
-                    </div>
-                </div>
-
-
-                <!-- ------------------------------------------ -->
-                <!-- PAGE 2B: GRACEFUL EXIT (IF TAKEN)          -->
-                <!-- ------------------------------------------ -->
-                <div v-else-if="currentStep === 'exit_taken'" key="exit_taken" class="text-center py-8 sm:py-10 space-y-3">
-                    <p class="font-serif text-2xl sm:text-3xl font-medium text-stone-800 leading-snug">
-                        Totally get it!
-                    </p>
-                    <p class="text-xs sm:text-sm text-stone-500 font-light leading-relaxed max-w-[280px] mx-auto">
-                        No worries at all. Hope you have a great rest of your week!
-                    </p>
-                    <div class="pt-4">
-                        <span class="inline-block px-3 py-1 rounded-full text-[11px] text-stone-600 bg-stone-100 font-mono">
-                            Closing quietly...
-                        </span>
-                    </div>
-                </div>
-
-
-                <!-- ------------------------------------------ -->
-                <!-- PAGE 3: CONTACT FORM (IF SINGLE)           -->
-                <!-- ------------------------------------------ -->
-                <div v-else-if="currentStep === 3" key="step3" class="space-y-5">
-                    <div class="flex items-center justify-between pb-1">
-                        <div>
-                            <p class="font-serif text-xl sm:text-2xl font-medium text-stone-900">
-                                Nice to meet you.
+                            <p>
+                                I know this is a bit out of nowhere, but I've noticed you around the room and just wanted to introduce myself.
                             </p>
-                            <p class="text-xs text-stone-500 font-light mt-0.5">
-                                Where's best to say hi?
+
+                            <p>
+                                You always look focused, and I didn't want to awkwardly interrupt you while you were busy, so I thought leaving this was simpler.
                             </p>
                         </div>
-                        <button 
-                            @click="goToStep(2)"
-                            class="text-xs text-stone-600 hover:text-stone-700 py-1 underline underline-offset-2 transition-colors">
-                            back
-                        </button>
-                    </div>
 
-                    <!-- Channel selector -->
-                    <div class="grid grid-cols-2 gap-1.5 p-1 bg-stone-200/60 rounded-xl text-xs font-medium">
-                        <button 
-                            type="button" 
-                            @click="contactType = 'instagram'"
-                            :class="contactType === 'instagram' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
-                            class="py-2.5 rounded-lg transition-all text-center">
-                            Instagram
-                        </button>
-                        <button 
-                            type="button" 
-                            @click="contactType = 'whatsapp'"
-                            :class="contactType === 'whatsapp' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
-                            class="py-2.5 rounded-lg transition-all text-center">
-                            WhatsApp
-                        </button>
-                    </div>
-
-                    <!-- Form Inputs with comfortable touch targets -->
-                    <form @submit.prevent="submitContact" class="space-y-3.5 pt-1">
-                        <div>
-                            <label class="block text-[11px] font-medium text-stone-500 mb-1">
-                                @{{ contactType === 'instagram' ? 'Your Instagram Username' : 'Your WhatsApp Number' }}
-                            </label>
-                            <input 
-                                v-model="contactValue" 
-                                type="text" 
-                                required
-                                :placeholder="contactType === 'instagram' ? '@your_username' : '0812xxxx...'" 
-                                class="w-full px-4 py-3 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all shadow-xs">
-                        </div>
-
-                        <div>
-                            <label class="block text-[11px] font-medium text-stone-500 mb-1">
-                                Short note <span class="text-stone-600 font-normal">(optional)</span>
-                            </label>
-                            <input 
-                                v-model="recipientNote" 
-                                type="text" 
-                                placeholder="Anything you'd like to add" 
-                                class="w-full px-4 py-3 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all shadow-xs">
-                        </div>
-
-                        <div class="pt-2">
+                        <!-- Footer Action Area Anchored at Bottom -->
+                        <div class="pt-5 sm:pt-8 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 pb-1 sm:pb-0">
+                            <span class="text-[11px] text-stone-600 font-light hidden sm:inline">
+                                A small hello
+                            </span>
                             <button 
-                                type="submit" 
-                                :disabled="isSubmitting || !contactValue.trim()"
-                                class="w-full py-3.5 px-4 rounded-xl btn-dark disabled:opacity-40 text-xs sm:text-sm font-medium active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-xs">
-                                <span v-if="!isSubmitting">Send</span>
-                                <span v-else>Sending...</span>
+                                @click="goToStep(2)"
+                                class="w-full sm:w-auto btn-dark py-3.5 sm:py-2.5 px-6 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.98] shadow-xs">
+                                <span>Continue</span>
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                </svg>
                             </button>
                         </div>
-                    </form>
-                </div>
-
-
-                <!-- ------------------------------------------ -->
-                <!-- PAGE 4: SUBMITTED SUCCESS                  -->
-                <!-- ------------------------------------------ -->
-                <div v-else-if="currentStep === 'submitted'" key="submitted" class="text-center py-8 sm:py-10 space-y-3">
-                    <p class="font-serif text-2xl sm:text-3xl font-medium text-stone-800 leading-snug">
-                        Got it.
-                    </p>
-                    <p class="text-xs sm:text-sm text-stone-500 font-light leading-relaxed max-w-[280px] mx-auto">
-                        I'll say hi soon! Have a good day ahead.
-                    </p>
-                    <div class="pt-4">
-                        <span class="inline-block px-3 py-1 rounded-full text-[11px] text-stone-600 bg-stone-100 font-mono">
-                            Closing note...
-                        </span>
                     </div>
-                </div>
 
-            </transition>
+
+                    <!-- ------------------------------------------ -->
+                    <!-- PAGE 2: THE GENTLE ASK / VIBE CHECK        -->
+                    <!-- ------------------------------------------ -->
+                    <div v-else-if="currentStep === 2" key="step2" class="flex flex-col justify-between h-full flex-1">
+                        <!-- Body Text -->
+                        <div class="space-y-4 text-[14px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light my-auto">
+                            <p>
+                                If you're open to getting coffee or just chatting sometime, I'd love to say hi properly.
+                            </p>
+
+                            <p class="text-xs text-stone-600 pt-1">
+                                Before that though, just to make sure I'm not overstepping:
+                            </p>
+
+                            <!-- Question & Choices Flowing Seamlessly -->
+                            <div class="space-y-3 pt-1">
+                                <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 text-center sm:text-left">
+                                    Are you seeing anyone?
+                                </p>
+                                <div class="grid grid-cols-2 gap-3 pt-1">
+                                    <button 
+                                        @click="selectChoice('single')"
+                                        :disabled="isSubmitting"
+                                        class="btn-choice py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
+                                        Single :)
+                                    </button>
+                                    <button 
+                                        @click="selectChoice('taken')"
+                                        :disabled="isSubmitting"
+                                        class="btn-choice py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
+                                        Seeing someone
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p class="text-[11px] text-stone-600 italic text-center sm:text-left pt-1">
+                                (No worries either way, whichever is true for you!)
+                            </p>
+                        </div>
+
+                        <!-- Footer Action Area -->
+                        <div class="pt-5 sm:pt-8 border-t border-stone-100 flex items-center justify-between shrink-0 pb-1 sm:pb-0">
+                            <button 
+                                @click="goToStep(1)"
+                                class="text-xs text-stone-600 hover:text-stone-700 py-1.5 flex items-center gap-1.5 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                </svg>
+                                <span>Read previous</span>
+                            </button>
+                        </div>
+                    </div>
+
+
+                    <!-- ------------------------------------------ -->
+                    <!-- PAGE 2B: GRACEFUL EXIT (IF TAKEN)          -->
+                    <!-- ------------------------------------------ -->
+                    <div v-else-if="currentStep === 'exit_taken'" key="exit_taken" class="text-center py-6 sm:py-10 space-y-3 my-auto flex-1 flex flex-col justify-center items-center">
+                        <p class="font-serif text-2xl sm:text-3xl font-medium text-stone-800 leading-snug">
+                            Totally get it!
+                        </p>
+                        <p class="text-xs sm:text-sm text-stone-500 font-light leading-relaxed max-w-[280px] mx-auto">
+                            No worries at all. Hope you have a great rest of your week!
+                        </p>
+                        <div class="pt-4">
+                            <span class="inline-block px-3 py-1 rounded-full text-[11px] text-stone-600 bg-stone-100 font-mono">
+                                Closing quietly...
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <!-- ------------------------------------------ -->
+                    <!-- PAGE 3: CONTACT FORM (IF SINGLE)           -->
+                    <!-- ------------------------------------------ -->
+                    <div v-else-if="currentStep === 3" key="step3" class="flex flex-col justify-between h-full flex-1">
+                        <div class="space-y-4 my-auto">
+                            <div class="flex items-center justify-between pb-1">
+                                <div>
+                                    <p class="font-serif text-xl sm:text-2xl font-medium text-stone-900">
+                                        Nice to meet you.
+                                    </p>
+                                    <p class="text-xs text-stone-500 font-light mt-0.5">
+                                        Where's best to say hi?
+                                    </p>
+                                </div>
+                                <button 
+                                    @click="goToStep(2)"
+                                    class="text-xs text-stone-600 hover:text-stone-700 py-1 underline underline-offset-2 transition-colors">
+                                    back
+                                </button>
+                            </div>
+
+                            <!-- Channel selector -->
+                            <div class="grid grid-cols-2 gap-1.5 p-1 bg-stone-200/60 rounded-xl text-xs font-medium">
+                                <button 
+                                    type="button" 
+                                    @click="contactType = 'instagram'"
+                                    :class="contactType === 'instagram' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
+                                    class="py-2.5 rounded-lg transition-all text-center">
+                                    Instagram
+                                </button>
+                                <button 
+                                    type="button" 
+                                    @click="contactType = 'whatsapp'"
+                                    :class="contactType === 'whatsapp' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
+                                    class="py-2.5 rounded-lg transition-all text-center">
+                                    WhatsApp
+                                </button>
+                            </div>
+
+                            <!-- Form Inputs -->
+                            <form @submit.prevent="submitContact" class="space-y-3 pt-1">
+                                <div>
+                                    <label class="block text-[11px] font-medium text-stone-500 mb-1">
+                                        @{{ contactType === 'instagram' ? 'Your Instagram Username' : 'Your WhatsApp Number' }}
+                                    </label>
+                                    <input 
+                                        v-model="contactValue" 
+                                        type="text" 
+                                        required
+                                        :placeholder="contactType === 'instagram' ? '@your_username' : '0812xxxx...'" 
+                                        class="w-full px-4 py-3 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all shadow-xs">
+                                </div>
+
+                                <div>
+                                    <label class="block text-[11px] font-medium text-stone-500 mb-1">
+                                        Short note <span class="text-stone-600 font-normal">(optional)</span>
+                                    </label>
+                                    <input 
+                                        v-model="recipientNote" 
+                                        type="text" 
+                                        placeholder="Anything you'd like to add" 
+                                        class="w-full px-4 py-3 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all shadow-xs">
+                                </div>
+
+                                <div class="pt-2">
+                                    <button 
+                                        type="submit" 
+                                        :disabled="isSubmitting || !contactValue.trim()"
+                                        class="w-full py-3.5 px-4 rounded-xl btn-dark disabled:opacity-40 text-xs sm:text-sm font-medium active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-xs">
+                                        <span v-if="!isSubmitting">Send</span>
+                                        <span v-else>Sending...</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <!-- ------------------------------------------ -->
+                    <!-- PAGE 4: SUBMITTED SUCCESS                  -->
+                    <!-- ------------------------------------------ -->
+                    <div v-else-if="currentStep === 'submitted'" key="submitted" class="text-center py-6 sm:py-10 space-y-3 my-auto flex-1 flex flex-col justify-center items-center">
+                        <p class="font-serif text-2xl sm:text-3xl font-medium text-stone-800 leading-snug">
+                            Got it.
+                        </p>
+                        <p class="text-xs sm:text-sm text-stone-500 font-light leading-relaxed max-w-[280px] mx-auto">
+                            I'll say hi soon! Have a good day ahead.
+                        </p>
+                        <div class="pt-4">
+                            <span class="inline-block px-3 py-1 rounded-full text-[11px] text-stone-600 bg-stone-100 font-mono">
+                                Closing note...
+                            </span>
+                        </div>
+                    </div>
+
+                </transition>
+            </div>
 
         </article>
 
