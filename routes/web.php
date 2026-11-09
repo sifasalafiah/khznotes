@@ -3,8 +3,17 @@
 use App\Http\Controllers\SecretNoteController;
 use Illuminate\Support\Facades\Route;
 
-// Admin & Note Generator Dashboard
-Route::get('/', [SecretNoteController::class, 'index'])->name('admin.index');
+// Root URL is blank / 404 (Discrete disguise)
+Route::get('/', function () {
+    abort(404);
+});
+
+// Protected Studio Dashboard
+Route::get('/studio', [SecretNoteController::class, 'index'])->name('studio.index');
+Route::post('/studio/login', [SecretNoteController::class, 'login'])->name('studio.login.submit');
+Route::post('/studio/logout', [SecretNoteController::class, 'logout'])->name('studio.logout');
+
+// Studio APIs (Protected by session)
 Route::post('/api/notes', [SecretNoteController::class, 'store'])->name('admin.notes.store');
 Route::get('/api/notes/live', [SecretNoteController::class, 'liveNotes'])->name('admin.notes.live');
 

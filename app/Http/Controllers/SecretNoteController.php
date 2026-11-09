@@ -12,10 +12,39 @@ class SecretNoteController extends Controller
     /**
      * Dashboard / Generator view for creating notes and checking responses
      */
-    public function index()
+    public function index(Request $request)
     {
+        if (!$request->session()->get('studio_auth')) {
+            return view('login');
+        }
+
         $notes = SecretNote::latest()->get();
         return view('admin', compact('notes'));
+    }
+
+    /**
+     * Authenticate studio access via passcode
+     */
+    public function login(Request $request)
+    {
+        $passcode = $request->input('passcode');
+        $validPasscode = env('STUDIO_PASSCODE', 'khz2026');
+
+        if ($passcode === $validPasscode) {
+            $request->session()->put('studio_auth', true);
+            return redirect()->route('studio.index');
+        }
+
+        return redirect()->route('studio.index')->with('error', 'Incorrect passcode. Access denied.');
+    }
+
+    /**
+     * Logout and lock studio
+     */
+    public function logout(Request $request)
+    {
+        $request->session()->forget('studio_auth');
+        return redirect()->route('studio.index');
     }
 
     /**
@@ -23,6 +52,9 @@ class SecretNoteController extends Controller
      */
     public function store(Request $request)
     {
+        if (!$request->session()->get('studio_auth')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized. Please login to studio.'], 401);
+        }
         $validated = $request->validate([
             'custom_slug'    => 'nullable|string|max:64|regex:/^[a-zA-Z0-9_\-]+$/|unique:secret_notes,token',
             'recipient_name' => 'nullable|string|max:100',
@@ -228,8 +260,12 @@ class SecretNoteController extends Controller
     /**
      * API for Admin to get live updates
      */
-    public function liveNotes()
+    public function liveNotes(Request $request)
     {
+        if (!$request->session()->get('studio_auth')) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         $notes = SecretNote::latest()->get();
         return response()->json($notes);
     }
