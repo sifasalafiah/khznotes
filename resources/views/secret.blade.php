@@ -229,9 +229,14 @@
                             <div class="pt-2">
                                 <button 
                                     @click="goToStep(2)"
-                                    class="w-full btn-dark py-3.5 px-6 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.98] shadow-xs">
-                                    <span>Continue</span>
-                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    :disabled="isNavigating || isSubmitting"
+                                    class="w-full btn-dark py-3.5 px-6 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.98] shadow-xs disabled:opacity-60 transition-all">
+                                    <svg v-if="isNavigating" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                    </svg>
+                                    <span>@{{ isNavigating ? 'Please wait...' : 'Continue' }}</span>
+                                    <svg v-if="!isNavigating" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                     </svg>
                                 </button>
@@ -256,38 +261,82 @@
 
                             <!-- Question & Choices Flowing Seamlessly -->
                             <div class="space-y-3 pt-1">
-                                <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 text-center sm:text-left">
-                                    Are you seeing anyone?
-                                </p>
-                                <div class="grid grid-cols-2 gap-3 pt-1">
-                                    <button 
-                                        @click="selectChoice('single')"
-                                        :disabled="isSubmitting"
-                                        class="btn-choice py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
-                                        Single :)
-                                    </button>
-                                    <button 
-                                        @click="selectChoice('taken')"
-                                        :disabled="isSubmitting"
-                                        class="btn-choice py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
-                                        Seeing someone
-                                    </button>
-                                </div>
-                            </div>
+                                <transition name="step-fade" mode="out-in">
+                                    <!-- Initial Choices State -->
+                                    <div v-if="!showTakenConfirm" key="vibe-question" class="space-y-3">
+                                        <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 text-center sm:text-left">
+                                            Are you seeing anyone?
+                                        </p>
+                                        <div class="grid grid-cols-2 gap-3 pt-1">
+                                            <button 
+                                                @click="selectChoice('single')"
+                                                :disabled="isSubmitting || isNavigating"
+                                                class="btn-choice py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 transition-all">
+                                                <svg v-if="isSubmitting && activeChoice === 'single'" class="w-3.5 h-3.5 animate-spin text-stone-700" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                                </svg>
+                                                <span>@{{ isSubmitting && activeChoice === 'single' ? 'One moment...' : 'Single :)' }}</span>
+                                            </button>
+                                            <button 
+                                                @click="promptTakenConfirm"
+                                                :disabled="isSubmitting || isNavigating"
+                                                class="btn-choice py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 transition-all">
+                                                <span>Seeing someone</span>
+                                            </button>
+                                        </div>
 
-                            <p class="text-[11px] text-stone-600 italic text-center sm:text-left pt-1">
-                                (No worries either way, whichever is true for you!)
-                            </p>
+                                        <p class="text-[11px] text-stone-600 italic text-center sm:text-left pt-1">
+                                            (No worries either way, whichever is true for you!)
+                                        </p>
+                                    </div>
+
+                                    <!-- Soft Confirmation State -->
+                                    <div v-else key="taken-confirm" class="space-y-3">
+                                        <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 text-center sm:text-left">
+                                            Just to be sure before this note closes:
+                                        </p>
+                                        <p class="text-xs text-stone-600 text-center sm:text-left leading-relaxed">
+                                            I'll close the note quietly so I don't bother you.
+                                        </p>
+                                        <div class="grid grid-cols-2 gap-3 pt-1">
+                                            <button 
+                                                type="button"
+                                                @click="cancelTakenConfirm"
+                                                :disabled="isSubmitting || isNavigating"
+                                                class="btn-choice py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 transition-all">
+                                                <span>Wait, go back</span>
+                                            </button>
+                                            <button 
+                                                type="button"
+                                                @click="confirmTaken"
+                                                :disabled="isSubmitting || isNavigating"
+                                                class="btn-dark py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 transition-all">
+                                                <svg v-if="isSubmitting && activeChoice === 'taken'" class="w-3.5 h-3.5 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                                </svg>
+                                                <span>@{{ isSubmitting && activeChoice === 'taken' ? 'Closing...' : "Yes, that's right" }}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
 
                             <!-- Back Button directly beneath choices -->
                             <div class="pt-2 flex items-center justify-center sm:justify-start">
                                 <button 
                                     @click="goToStep(1)"
-                                    class="text-xs text-stone-600 hover:text-stone-700 py-1.5 flex items-center gap-1.5 transition-colors">
-                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    :disabled="isNavigating || isSubmitting"
+                                    class="text-xs text-stone-600 hover:text-stone-700 py-1.5 flex items-center gap-1.5 transition-colors disabled:opacity-50">
+                                    <svg v-if="!isNavigating" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                                     </svg>
-                                    <span>Read previous</span>
+                                    <svg v-else class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                    </svg>
+                                    <span>@{{ isNavigating ? 'Loading...' : 'Read previous' }}</span>
                                 </button>
                             </div>
                         </div>
@@ -447,6 +496,9 @@
                 const contactValue = ref('');
                 const recipientNote = ref('');
                 const isSubmitting = ref(false);
+                const isNavigating = ref(false);
+                const activeChoice = ref('');
+                const showTakenConfirm = ref(false);
 
                 const currentDate = new Date().toLocaleDateString('en-US', {
                     month: 'short',
@@ -458,75 +510,149 @@
                     return el ? el.getAttribute('content') : '';
                 };
 
-                const saveStep = (step) => {
+                const saveStep = async (step) => {
                     try {
                         localStorage.setItem('secret_step_' + noteData.value.token, step);
                     } catch(e) {}
 
-                    fetch(`/api/private/${noteData.value.token}/status`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': getCsrfToken(),
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ current_step: typeof step === 'number' ? step : 2 })
-                    }).catch(e => console.error('Step sync error:', e));
+                    try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 2500);
+
+                        await fetch(`/api/private/${noteData.value.token}/status`, {
+                            method: 'POST',
+                            signal: controller.signal,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': getCsrfToken(),
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({ current_step: typeof step === 'number' ? step : 2 })
+                        });
+                        clearTimeout(timeoutId);
+                    } catch (e) {
+                        console.error('Step sync error:', e);
+                    }
                 };
 
-                const goToStep = (step) => {
-                    currentStep.value = step;
-                    saveStep(step);
+                const goToStep = async (step) => {
+                    if (isNavigating.value || isSubmitting.value) return;
+                    isNavigating.value = true;
+                    showTakenConfirm.value = false;
+
+                    try {
+                        await saveStep(step);
+                        currentStep.value = step;
+                    } catch (e) {
+                        currentStep.value = step;
+                    } finally {
+                        isNavigating.value = false;
+                    }
+                };
+
+                const promptTakenConfirm = () => {
+                    if (isSubmitting.value || isNavigating.value) return;
+                    showTakenConfirm.value = true;
+                };
+
+                const cancelTakenConfirm = () => {
+                    if (isSubmitting.value || isNavigating.value) return;
+                    showTakenConfirm.value = false;
                 };
 
                 const selectChoice = async (val) => {
+                    if (isSubmitting.value || isNavigating.value) return;
+
+                    if (val === 'taken') {
+                        showTakenConfirm.value = true;
+                        return;
+                    }
+
                     isSubmitting.value = true;
+                    activeChoice.value = 'single';
 
                     try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
                         await fetch(`/api/private/${noteData.value.token}/status`, {
                             method: 'POST',
+                            signal: controller.signal,
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': getCsrfToken(),
                                 'Accept': 'application/json'
                             },
                             body: JSON.stringify({
-                                status: val,
-                                relationship_choice: val,
-                                current_step: val === 'single' ? 3 : 2
+                                status: 'single',
+                                relationship_choice: 'single',
+                                current_step: 3
                             })
                         });
+                        clearTimeout(timeoutId);
 
-                        if (val === 'taken') {
-                            currentStep.value = 'exit_taken';
-                            setTimeout(() => {
-                                triggerDestroyServer();
-                            }, 4000);
-                        } else {
-                            currentStep.value = 3;
-                            saveStep(3);
-                        }
+                        currentStep.value = 3;
+                        saveStep(3);
                     } catch (err) {
-                        if (val === 'taken') {
-                            currentStep.value = 'exit_taken';
-                            setTimeout(() => {
-                                triggerDestroyServer();
-                            }, 4000);
-                        } else {
-                            currentStep.value = 3;
-                        }
+                        currentStep.value = 3;
+                        saveStep(3);
                     } finally {
                         isSubmitting.value = false;
+                        activeChoice.value = '';
+                    }
+                };
+
+                const confirmTaken = async () => {
+                    if (isSubmitting.value || isNavigating.value) return;
+                    isSubmitting.value = true;
+                    activeChoice.value = 'taken';
+
+                    try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+                        await fetch(`/api/private/${noteData.value.token}/status`, {
+                            method: 'POST',
+                            signal: controller.signal,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': getCsrfToken(),
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                status: 'taken',
+                                relationship_choice: 'taken',
+                                current_step: 2
+                            })
+                        });
+                        clearTimeout(timeoutId);
+
+                        currentStep.value = 'exit_taken';
+                        setTimeout(() => {
+                            triggerDestroyServer();
+                        }, 4000);
+                    } catch (err) {
+                        currentStep.value = 'exit_taken';
+                        setTimeout(() => {
+                            triggerDestroyServer();
+                        }, 4000);
+                    } finally {
+                        isSubmitting.value = false;
+                        activeChoice.value = '';
                     }
                 };
 
                 const submitContact = async () => {
-                    if (!contactValue.value.trim()) return;
+                    if (isSubmitting.value || isNavigating.value || !contactValue.value.trim()) return;
                     isSubmitting.value = true;
 
                     try {
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
                         await fetch(`/api/private/${noteData.value.token}/status`, {
                             method: 'POST',
+                            signal: controller.signal,
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': getCsrfToken(),
@@ -540,6 +666,7 @@
                                 current_step: 3
                             })
                         });
+                        clearTimeout(timeoutId);
 
                         if (window.confetti) {
                             window.confetti({
@@ -597,9 +724,15 @@
                     contactValue,
                     recipientNote,
                     isSubmitting,
+                    isNavigating,
+                    activeChoice,
+                    showTakenConfirm,
                     currentDate,
                     goToStep,
                     selectChoice,
+                    promptTakenConfirm,
+                    cancelTakenConfirm,
+                    confirmTaken,
                     submitContact
                 };
             }

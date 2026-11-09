@@ -35,8 +35,19 @@
         }
     </script>
 
-    <!-- QRCode JS Library -->
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+    <!-- Local / CDN QR Code & html2canvas Libraries -->
+    <script src="/js/qrcode.min.js"></script>
+    <script>
+        if (!window.QRCode) {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.1/qrcode.min.js"><\/script>');
+        }
+    </script>
+    <script src="/js/html2canvas.min.js"></script>
+    <script>
+        if (!window.html2canvas) {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>');
+        }
+    </script>
 
     <style>
         [v-cloak] { display: none; }
@@ -45,28 +56,34 @@
             color: #2e2825;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
-        
-        /* Luxury Linen Stationery Card */
-        .card-stationery-blush {
-            background: linear-gradient(135deg, #ffffff 0%, #fffbf8 100%);
-            border: 1px solid #ebdcd0;
-            box-shadow: 0 15px 35px -8px rgba(195, 155, 135, 0.2);
-        }
 
         @media print {
             body * { visibility: hidden; }
-            #printable-card, #printable-card * { visibility: visible; }
-            #printable-card {
+            #printable-cards-container, #printable-cards-container * { visibility: visible; }
+            #printable-cards-container {
                 position: absolute;
                 left: 0;
                 top: 0;
-                width: 85mm;
-                height: 54mm;
-                border: 1px solid #d4c2b4 !important;
-                background: #fffdfa !important;
+                width: 100%;
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8mm !important;
+                align-items: center !important;
+                padding: 10mm 0 !important;
+            }
+            .print-card-exact {
+                width: 85.6mm !important;
+                height: 53.98mm !important;
+                max-width: 85.6mm !important;
+                max-height: 53.98mm !important;
+                border: 1px solid #d4c8bd !important;
+                background: #faf8f5 !important;
                 color: #2e2825 !important;
-                padding: 6mm !important;
+                padding: 4.5mm !important;
                 box-shadow: none !important;
+                page-break-inside: avoid !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
         }
     </style>
@@ -186,64 +203,186 @@
                 </div>
 
 
-                <!-- Physical Printable Card Preview -->
-                <div v-if="selectedNote" class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-stone-600">
-                            Printable Boutique Card Preview
-                        </h3>
+                <!-- Physical Printable Card Preview (85.6mm x 54mm e-Money / Brizzi size) -->
+                <div v-if="selectedNote" class="space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
+                                <span>Boutique Physical Card</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 font-mono font-medium">85.6 × 54 mm</span>
+                            </h3>
+                            <p class="text-[11px] text-stone-500 font-light mt-0.5">
+                                Standard ID-1 size (Brizzi / e-Money). Two-sided layout with instant PNG download.
+                            </p>
+                        </div>
+
+                        <!-- Print Action -->
                         <button 
                             @click="printCard" 
-                            class="px-2.5 py-1 text-[11px] rounded-lg bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium transition-colors flex items-center gap-1.5 border border-stone-200">
+                            class="self-start sm:self-auto px-3 py-1.5 text-xs rounded-xl bg-white hover:bg-stone-50 text-stone-700 font-medium transition-colors flex items-center gap-1.5 border border-stone-200 shadow-xs">
                             <svg class="w-3.5 h-3.5 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                             </svg>
-                            <span>Print Card</span>
+                            <span>Print Both Sides</span>
                         </button>
                     </div>
 
                     <!-- Custom Domain / Wi-Fi IP setting for QR Code -->
-                    <div class="p-3.5 rounded-2xl bg-white border border-stone-200 text-xs space-y-1 shadow-sm">
-                        <label class="block text-[11px] font-semibold text-stone-600">
-                            Host URL encoded in QR Code:
-                        </label>
+                    <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 text-xs space-y-1.5 shadow-xs">
+                        <div class="flex items-center justify-between">
+                            <label class="block text-[11px] font-semibold text-stone-600">
+                                Host URL encoded in QR Code:
+                            </label>
+                            <span class="text-[10px] text-stone-500 font-mono">Wi-Fi IP for phone scan</span>
+                        </div>
                         <input 
                             v-model="customBaseUrl" 
                             @input="updateQrCode"
                             type="text" 
                             placeholder="e.g. http://10.200.99.149:8000 or public domain"
-                            class="w-full px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs font-mono text-stone-800 focus:outline-none focus:border-rose-400">
-                        <p class="text-[10px] text-stone-400">
-                            For phone scanning on same Wi-Fi, enter laptop IP (e.g. <span class="font-mono text-stone-600">http://10.200.99.149:8000</span>).
-                        </p>
+                            class="w-full px-3 py-2 rounded-xl bg-stone-50/70 border border-stone-200 text-xs font-mono text-stone-800 focus:outline-none focus:border-rose-400">
                     </div>
 
-                    <!-- The Luxury Stationery Card Layout -->
-                    <div id="printable-card" class="card-stationery-blush rounded-[24px] p-5 text-stone-800 flex items-center gap-4 relative overflow-hidden">
-                        <!-- Left: QR Code -->
-                        <div class="bg-white p-2 rounded-xl shadow-sm border border-stone-100 shrink-0">
-                            <canvas id="qr-canvas" class="w-24 h-24 block"></canvas>
+                    <!-- Side Switcher Tabs & Download Actions -->
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <!-- Card Side Selector -->
+                        <div class="inline-flex p-1 rounded-xl bg-stone-200/60 text-xs font-medium">
+                            <button 
+                                type="button" 
+                                @click="cardSide = 'front'"
+                                :class="cardSide === 'front' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
+                                class="px-3 py-1.5 rounded-lg transition-all text-xs">
+                                Front (Depan)
+                            </button>
+                            <button 
+                                type="button" 
+                                @click="cardSide = 'back'"
+                                :class="cardSide === 'back' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
+                                class="px-3 py-1.5 rounded-lg transition-all text-xs">
+                                Back (Belakang)
+                            </button>
+                            <button 
+                                type="button" 
+                                @click="cardSide = 'both'"
+                                :class="cardSide === 'both' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
+                                class="px-3 py-1.5 rounded-lg transition-all text-xs">
+                                Both Sides
+                            </button>
                         </div>
 
-                        <!-- Right: Text Content -->
-                        <div class="flex-1 min-w-0">
-                            <div class="text-[9px] uppercase tracking-widest text-stone-400 font-medium mb-1">
-                                Personal Note
+                        <!-- Download PNG Buttons -->
+                        <div class="flex items-center gap-1.5">
+                            <button 
+                                type="button"
+                                @click="downloadCard('front')"
+                                :disabled="isDownloadingFront"
+                                class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-stone-50 text-xs text-stone-700 font-medium transition-colors border border-stone-200 shadow-xs flex items-center gap-1 disabled:opacity-50">
+                                <svg v-if="!isDownloadingFront" class="w-3.5 h-3.5 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                <svg v-else class="w-3.5 h-3.5 animate-spin text-stone-500" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                                <span>Front PNG</span>
+                            </button>
+                            <button 
+                                type="button"
+                                @click="downloadCard('back')"
+                                :disabled="isDownloadingBack"
+                                class="px-2.5 py-1.5 rounded-xl bg-white hover:bg-stone-50 text-xs text-stone-700 font-medium transition-colors border border-stone-200 shadow-xs flex items-center gap-1 disabled:opacity-50">
+                                <svg v-if="!isDownloadingBack" class="w-3.5 h-3.5 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                <svg v-else class="w-3.5 h-3.5 animate-spin text-stone-500" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                                <span>Back PNG</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CARD DISPLAY CONTAINER (Exact Brizzi / e-Money 85.6mm x 54mm Aspect Ratio) -->
+                    <div id="printable-cards-container" class="space-y-4">
+
+                        <!-- FRONT SIDE (Sisi Depan) -->
+                        <div v-show="cardSide === 'front' || cardSide === 'both'" class="space-y-1.5">
+                            <div class="flex items-center justify-between text-[10px] text-stone-500 font-mono px-1">
+                                <span>SIDE A &bull; FRONT (COVER)</span>
+                                <span>85.6 × 54 mm</span>
                             </div>
-                            <h4 class="font-serif font-semibold text-base text-stone-900 leading-tight mb-1">
-                                A note for you.
-                            </h4>
-                            <p class="text-[11px] text-stone-500 leading-snug line-clamp-2 mb-2 font-light">
-                                Whenever you have a quiet minute.
-                            </p>
-                            <div class="text-[9px] font-mono text-stone-400">
-                                @{{ selectedNote.recipient_name || 'Private Note' }}
+                            <div id="card-front" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-xs select-none">
+                                <div class="absolute inset-2 rounded-xl border border-stone-200/60 pointer-events-none"></div>
+
+                                <div class="flex items-center justify-between relative z-10 text-[9px] uppercase tracking-[0.2em] text-stone-500 font-medium">
+                                    <span>Private Note</span>
+                                    <span class="w-1.5 h-1.5 rounded-full bg-stone-300"></span>
+                                    <span>Personal Memo</span>
+                                </div>
+
+                                <div class="relative z-10 my-auto py-2">
+                                    <h3 class="font-serif text-2xl sm:text-[26px] font-medium text-stone-900 tracking-tight leading-snug mb-2">
+                                        A note for you.
+                                    </h3>
+                                    <p class="text-xs sm:text-[13px] text-stone-600 font-light leading-relaxed">
+                                        Whenever you have a quiet minute to yourself.
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center justify-between relative z-10 text-[9px] text-stone-500 font-mono tracking-wider">
+                                    <span>@{{ selectedNote.recipient_name || 'Someone Special' }}</span>
+                                    <span class="text-stone-500">Scan on back &rarr;</span>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- BACK SIDE (Sisi Belakang dengan QR Code) -->
+                        <div v-show="cardSide === 'back' || cardSide === 'both'" class="space-y-1.5">
+                            <div class="flex items-center justify-between text-[10px] text-stone-500 font-mono px-1">
+                                <span>SIDE B &bull; BACK (QR CODE)</span>
+                                <span>85.6 × 54 mm</span>
+                            </div>
+                            <div id="card-back" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
+                                <div class="absolute inset-2 rounded-xl border border-stone-200/60 pointer-events-none"></div>
+
+                                <div class="relative z-10 flex-1 min-w-0 flex flex-col justify-between h-full py-1">
+                                    <div>
+                                        <div class="text-[9px] uppercase tracking-[0.2em] text-stone-500 font-medium mb-1.5">
+                                            Scan to Open
+                                        </div>
+                                        <p class="font-serif text-base sm:text-lg font-medium text-stone-900 leading-tight mb-1">
+                                            Open with camera.
+                                        </p>
+                                        <p class="text-[11px] text-stone-600 font-light leading-snug">
+                                            Point your phone camera at the QR code to read this note privately.
+                                        </p>
+                                    </div>
+
+                                    <div class="pt-2">
+                                        <div class="text-[8.5px] font-mono text-stone-600 truncate mb-0.5">
+                                            @{{ getNoteUrl(selectedNote.token) }}
+                                        </div>
+                                        <div class="text-[8px] text-stone-500 uppercase tracking-wider">
+                                            One-time link &bull; Closes after completion
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="relative z-10 shrink-0 bg-white p-2 rounded-xl border border-stone-200/90 shadow-2xs flex flex-col items-center justify-center">
+                                    <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                                        <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-full h-full object-contain block">
+                                        <canvas v-show="!qrDataUrl" id="qr-canvas" class="w-24 h-24 sm:w-28 sm:h-28 block"></canvas>
+                                    </div>
+                                    <span class="text-[8px] uppercase tracking-widest text-stone-500 mt-1 font-medium font-mono">Scan Me</span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- Direct Link Preview -->
-                    <div class="p-3 rounded-2xl bg-white border border-stone-200 text-xs flex items-center justify-between gap-2 shadow-sm">
+                    <div class="p-3 rounded-2xl bg-white border border-stone-200 text-xs flex items-center justify-between gap-2 shadow-xs">
                         <span class="font-mono text-[11px] text-stone-500 truncate">@{{ getNoteUrl(selectedNote.token) }}</span>
                         <div class="flex items-center gap-1.5 shrink-0">
                             <button 
@@ -416,6 +555,11 @@
                 const isRefreshing = ref(false);
                 const isCreating = ref(false);
                 const customBaseUrl = ref(window.location.origin);
+                const cardSide = ref('both');
+                const qrDataUrl = ref('');
+                const isDownloadingFront = ref(false);
+                const isDownloadingBack = ref(false);
+                const isBurningId = ref(null);
 
                 const form = ref({
                     room_context: 'Same Room',
@@ -437,17 +581,37 @@
                 };
 
                 const renderQr = (text) => {
+                    if (!text) return;
                     nextTick(() => {
-                        const canvas = document.getElementById('qr-canvas');
-                        if (canvas && window.QRCode) {
-                            window.QRCode.toCanvas(canvas, text, {
-                                width: 96,
+                        if (window.QRCode) {
+                            // Generate high-res image data URL for <img>
+                            window.QRCode.toDataURL(text, {
+                                width: 280,
                                 margin: 1,
                                 color: {
-                                    dark: '#2e2825',
+                                    dark: '#1c1917',
                                     light: '#ffffff'
                                 }
+                            }, (err, url) => {
+                                if (!err && url) {
+                                    qrDataUrl.value = url;
+                                }
                             });
+
+                            // Also draw to canvas as fallback
+                            const canvas = document.getElementById('qr-canvas');
+                            if (canvas) {
+                                window.QRCode.toCanvas(canvas, text, {
+                                    width: 112,
+                                    margin: 1,
+                                    color: {
+                                        dark: '#1c1917',
+                                        light: '#ffffff'
+                                    }
+                                }, (err) => {
+                                    if (err) console.error('QR canvas error:', err);
+                                });
+                            }
                         }
                     });
                 };
@@ -461,6 +625,41 @@
                 const selectNote = (note) => {
                     selectedNote.value = note;
                     renderQr(getNoteUrl(note.token));
+                };
+
+                const downloadCard = async (side) => {
+                    const elId = side === 'front' ? 'card-front' : 'card-back';
+                    const el = document.getElementById(elId);
+                    if (!el) return;
+
+                    if (!window.html2canvas) {
+                        alert('Image generator is still loading. Please try again in a moment.');
+                        return;
+                    }
+
+                    if (side === 'front') isDownloadingFront.value = true;
+                    else isDownloadingBack.value = true;
+
+                    try {
+                        const canvas = await window.html2canvas(el, {
+                            scale: 3, // 300+ DPI high resolution export
+                            useCORS: true,
+                            backgroundColor: null,
+                            logging: false
+                        });
+
+                        const token = selectedNote.value ? selectedNote.value.token : 'note';
+                        const link = document.createElement('a');
+                        link.download = `boutique-card-${token}-${side}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    } catch (err) {
+                        console.error('Failed to export card image:', err);
+                        alert('Could not export image. You can use the Print button to save as PDF.');
+                    } finally {
+                        if (side === 'front') isDownloadingFront.value = false;
+                        else isDownloadingBack.value = false;
+                    }
                 };
 
                 const fetchNotes = async () => {
@@ -517,6 +716,7 @@
 
                 const burnNote = async (note) => {
                     if (!confirm('Are you sure you want to permanently close this note?')) return;
+                    isBurningId.value = note.id;
                     try {
                         const res = await fetch(`/api/private/${note.token}/destroy`, {
                             method: 'POST',
@@ -531,6 +731,8 @@
                         }
                     } catch (e) {
                         console.error('Failed to close note:', e);
+                    } finally {
+                        isBurningId.value = null;
                     }
                 };
 
@@ -585,6 +787,11 @@
                 return {
                     notes,
                     selectedNote,
+                    cardSide,
+                    qrDataUrl,
+                    isDownloadingFront,
+                    isDownloadingBack,
+                    isBurningId,
                     form,
                     slugError,
                     customBaseUrl,
@@ -593,6 +800,7 @@
                     getNoteUrl,
                     updateQrCode,
                     selectNote,
+                    downloadCard,
                     fetchNotes,
                     createNote,
                     burnNote,
