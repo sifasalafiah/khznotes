@@ -30,8 +30,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.4/dist/confetti.browser.min.js"></script>
 
     <style>
-        [v-cloak] { display: none; }
-
         /* Lock scrolling completely on mobile */
         html, body {
             height: 100%;
@@ -104,11 +102,80 @@
             opacity: 0;
             transform: translateY(-4px);
         }
+
+        /* Shimmer Loading Animation */
+        @keyframes shimmerPulse {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .shimmer-pulse {
+            background: linear-gradient(90deg, #ede7de 25%, #f6f2eb 50%, #ede7de 75%);
+            background-size: 200% 100%;
+            animation: shimmerPulse 1.6s infinite ease-in-out;
+        }
+
+        /* Hide raw vue app before load */
+        [v-cloak] {
+            display: none !important;
+        }
+
+        /* Hide shimmer once Vue is loaded */
+        .vue-loaded #shimmer-placeholder {
+            display: none !important;
+        }
+
+        /* Subtle Fade In for Loaded Vue App */
+        @keyframes fadeInContent {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        main#app:not([v-cloak]) {
+            animation: fadeInContent 0.22s ease-out forwards;
+        }
     </style>
 </head>
 <body class="h-full h-[100dvh] sm:h-auto sm:min-h-screen flex flex-col justify-between sm:justify-center sm:items-center p-0 sm:p-6 md:p-10 selection:bg-stone-200 selection:text-stone-900 overflow-hidden sm:overflow-auto">
 
-    <!-- Main Container: 100dvh on mobile without scroll; elegant stationery card on desktop -->
+    <!-- ============================================================== -->
+    <!-- SHIMMER SKELETON (Instant shape matching the memo stationery)  -->
+    <!-- ============================================================== -->
+    <div id="shimmer-placeholder" class="w-full max-w-full sm:max-w-[430px] md:max-w-[460px] mx-auto h-full h-[100dvh] sm:h-auto sm:my-auto flex flex-col justify-between px-6 py-6 sm:p-0 overflow-hidden sm:overflow-visible">
+        <article class="stationery-card sm:rounded-3xl p-0 sm:p-8 md:p-9 relative flex flex-col justify-between h-full sm:h-auto flex-1 sm:flex-initial overflow-hidden sm:overflow-visible">
+            
+            <!-- Top Header Shimmer -->
+            <header class="flex items-center justify-between pb-3.5 mb-4 sm:mb-7 stationery-line shrink-0">
+                <div class="h-3 w-24 rounded-md shimmer-pulse"></div>
+                <div class="h-3 w-12 rounded-md shimmer-pulse"></div>
+            </header>
+
+            <!-- Body Text Shimmer -->
+            <div class="flex-1 flex flex-col justify-between overflow-hidden">
+                <div class="space-y-4 my-auto">
+                    <div class="h-7 w-16 rounded-md shimmer-pulse mb-3"></div>
+                    <div class="space-y-2.5">
+                        <div class="h-3.5 w-full rounded-md shimmer-pulse"></div>
+                        <div class="h-3.5 w-[92%] rounded-md shimmer-pulse"></div>
+                        <div class="h-3.5 w-[78%] rounded-md shimmer-pulse"></div>
+                    </div>
+                    <div class="space-y-2.5 pt-3">
+                        <div class="h-3.5 w-[95%] rounded-md shimmer-pulse"></div>
+                        <div class="h-3.5 w-[85%] rounded-md shimmer-pulse"></div>
+                    </div>
+                </div>
+
+                <!-- Footer Action Shimmer -->
+                <div class="pt-5 sm:pt-8 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 pb-1 sm:pb-0">
+                    <div class="h-11 w-full rounded-xl shimmer-pulse"></div>
+                </div>
+            </div>
+
+        </article>
+    </div>
+
+
+    <!-- ============================================================== -->
+    <!-- REAL VUE APPLICATION (Mounts seamlessly with exact initialStep) -->
+    <!-- ============================================================== -->
     <main id="app" v-cloak class="w-full max-w-full sm:max-w-[430px] md:max-w-[460px] mx-auto h-full h-[100dvh] sm:h-auto sm:my-auto flex flex-col justify-between px-6 py-6 sm:p-0 transition-all duration-300 overflow-hidden sm:overflow-visible">
 
         <!-- ============================================== -->
@@ -365,7 +432,17 @@
             setup() {
                 const noteData = ref(window.__NOTE_DATA__ || {});
                 const isDestroyed = ref(noteData.value.isDestroyed || false);
-                const currentStep = ref(1); // Default Page 1
+
+                // Compute exact step SYNCHRONOUSLY before initial render to prevent step-1 flashing
+                let initialStep = noteData.value.currentStep || 1;
+                try {
+                    const localStep = localStorage.getItem('secret_step_' + noteData.value.token);
+                    if (localStep && parseInt(localStep) > initialStep) {
+                        initialStep = parseInt(localStep);
+                    }
+                } catch (e) {}
+
+                const currentStep = ref(initialStep);
                 const contactType = ref('instagram');
                 const contactValue = ref('');
                 const recipientNote = ref('');
@@ -506,20 +583,10 @@
                 };
 
                 onMounted(() => {
-                    if (isDestroyed.value) return;
-
-                    // Resume step if user previously advanced
-                    let localStep = null;
-                    try {
-                        localStep = localStorage.getItem('secret_step_' + noteData.value.token);
-                    } catch (e) {}
-
-                    const savedStep = noteData.value.currentStep || (localStep ? parseInt(localStep) : 1);
-                    if (savedStep && savedStep > 1) {
-                        currentStep.value = savedStep;
-                    } else {
-                        currentStep.value = 1;
-                    }
+                    // Mark body as loaded and immediately remove the shimmer skeleton
+                    document.body.classList.add('vue-loaded');
+                    const placeholder = document.getElementById('shimmer-placeholder');
+                    if (placeholder) placeholder.remove();
                 });
 
                 return {
