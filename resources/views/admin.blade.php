@@ -339,10 +339,10 @@
                             <div id="card-back" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
                                 <!-- Left: Text Instruction & Link -->
                                 <div class="flex-1 min-w-0 flex flex-col justify-center space-y-2.5 pr-2">
-                                    <p class="text-xs sm:text-[12.5px] text-stone-700 font-light leading-relaxed">
-                                        Point your phone camera at the QR code, or visit this link:
+                                    <p class="text-xs sm:text-[13px] text-stone-800 font-normal leading-snug">
+                                        Scan the QR or visit:
                                     </p>
-                                    <div class="p-2 rounded-xl bg-white/90 border border-stone-200/80">
+                                    <div class="p-2.5 rounded-xl bg-white/90 border border-stone-200/80 shadow-2xs">
                                         <p class="text-[9.5px] font-mono text-stone-700 break-all leading-tight select-all">
                                             @{{ getNoteUrl(selectedNote.token) }}
                                         </p>
