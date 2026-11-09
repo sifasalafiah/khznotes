@@ -347,12 +347,10 @@
                                     </p>
                                 </div>
 
-                                <!-- Right: Crisp Clean QR Code -->
-                                <div class="shrink-0 bg-white p-2.5 rounded-xl border border-stone-200/90 shadow-2xs flex items-center justify-center">
-                                    <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
-                                        <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-full h-full object-contain block">
-                                        <canvas v-show="!qrDataUrl" id="qr-canvas" class="w-24 h-24 sm:w-28 sm:h-28 block"></canvas>
-                                    </div>
+                                <!-- Right: Direct Print QR Code (No box, seamless on ivory stationery) -->
+                                <div class="shrink-0 w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                                    <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-full h-full object-contain block">
+                                    <canvas v-show="!qrDataUrl" id="qr-canvas" class="w-24 h-24 sm:w-28 sm:h-28 block"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -568,13 +566,13 @@
                     if (!text) return;
                     nextTick(() => {
                         if (window.QRCode) {
-                            // Generate high-res image data URL for <img>
+                            // Generate high-res image data URL for <img> blending with card paper
                             window.QRCode.toDataURL(text, {
                                 width: 280,
                                 margin: 1,
                                 color: {
                                     dark: '#1c1917',
-                                    light: '#ffffff'
+                                    light: '#faf8f5'
                                 }
                             }, (err, url) => {
                                 if (!err && url) {
@@ -590,7 +588,7 @@
                                     margin: 1,
                                     color: {
                                         dark: '#1c1917',
-                                        light: '#ffffff'
+                                        light: '#faf8f5'
                                     }
                                 }, (err) => {
                                     if (err) console.error('QR canvas error:', err);
