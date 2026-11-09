@@ -201,7 +201,7 @@
 
             <!-- Top Memo Header -->
             <header class="flex items-center justify-between pb-3.5 mb-4 sm:mb-7 stationery-line text-[11px] text-stone-600 tracking-wider shrink-0">
-                <span class="font-medium uppercase">Personal Note</span>
+                <span class="font-medium uppercase">Private Note</span>
                 <span class="text-stone-600">@{{ currentDate }}</span>
             </header>
 
@@ -364,7 +364,12 @@
                                     </label>
                                     <input 
                                         v-model="contactValue" 
-                                        type="text" 
+                                        :type="contactType === 'whatsapp' ? 'tel' : 'text'"
+                                        :inputmode="contactType === 'whatsapp' ? 'tel' : 'text'"
+                                        :autocomplete="contactType === 'whatsapp' ? 'tel' : 'username'"
+                                        autocapitalize="none"
+                                        autocorrect="off"
+                                        spellcheck="false"
                                         required
                                         :placeholder="contactType === 'instagram' ? '@your_username' : '0812xxxx...'" 
                                         class="w-full px-4 py-3 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all shadow-xs">
