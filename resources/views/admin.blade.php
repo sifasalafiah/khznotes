@@ -337,16 +337,14 @@
                                 <span>85.6 × 54 mm</span>
                             </div>
                             <div id="card-back" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
-                                <!-- Left: Text Instruction & Link -->
-                                <div class="flex-1 min-w-0 flex flex-col justify-center space-y-2.5 pr-2">
+                                <!-- Left: Text Instruction & Link (Clean typography, no box, domain-only without http/https) -->
+                                <div class="flex-1 min-w-0 flex flex-col justify-center space-y-1.5 pr-2">
                                     <p class="text-xs sm:text-[13px] text-stone-800 font-normal leading-snug">
                                         Scan the QR or visit:
                                     </p>
-                                    <div class="p-2.5 rounded-xl bg-white/90 border border-stone-200/80 shadow-2xs">
-                                        <p class="text-[9.5px] font-mono text-stone-700 break-all leading-tight select-all">
-                                            @{{ getNoteUrl(selectedNote.token) }}
-                                        </p>
-                                    </div>
+                                    <p class="text-[10px] sm:text-[11px] font-mono text-stone-600 break-all leading-normal select-all">
+                                        @{{ formatCardUrl(selectedNote.token) }}
+                                    </p>
                                 </div>
 
                                 <!-- Right: Crisp Clean QR Code -->
@@ -560,6 +558,12 @@
                     return `${base}/private/${token}`;
                 };
 
+                const formatCardUrl = (token) => {
+                    if (!token) return '';
+                    const full = getNoteUrl(token);
+                    return full.replace(/^https?:\/\//i, '');
+                };
+
                 const renderQr = (text) => {
                     if (!text) return;
                     nextTick(() => {
@@ -617,6 +621,15 @@
                         return;
                     }
 
+                    const previousSide = cardSide.value;
+                    if (side === 'front' && cardSide.value === 'back') {
+                        cardSide.value = 'both';
+                        await nextTick();
+                    } else if (side === 'back' && cardSide.value === 'front') {
+                        cardSide.value = 'both';
+                        await nextTick();
+                    }
+
                     if (side === 'front') isDownloadingFront.value = true;
                     else isDownloadingBack.value = true;
 
@@ -637,6 +650,7 @@
                         console.error('Failed to export card image:', err);
                         alert('Could not export image. You can use the Print button to save as PDF.');
                     } finally {
+                        cardSide.value = previousSide;
                         if (side === 'front') isDownloadingFront.value = false;
                         else isDownloadingBack.value = false;
                     }
@@ -778,6 +792,7 @@
                     isRefreshing,
                     isCreating,
                     getNoteUrl,
+                    formatCardUrl,
                     updateQrCode,
                     selectNote,
                     downloadCard,
