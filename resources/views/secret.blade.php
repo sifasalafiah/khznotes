@@ -170,7 +170,7 @@
                         </p>
 
                         <p class="text-xs text-stone-600 pt-1">
-                            Before that though—just to make sure I'm not overstepping:
+                            Before that though, just to make sure I'm not overstepping:
                         </p>
 
                         <!-- Choice Card with Generous Touch Targets -->
@@ -195,7 +195,7 @@
                         </div>
 
                         <p class="text-[11px] text-stone-600 italic text-center pt-1">
-                            (No worries either way—whichever is true for you!)
+                            (No worries either way, whichever is true for you!)
                         </p>
                     </div>
 
@@ -221,7 +221,7 @@
                         Totally get it!
                     </p>
                     <p class="text-xs sm:text-sm text-stone-500 font-light leading-relaxed max-w-[280px] mx-auto">
-                        No worries at all—hope you have a great rest of your week.
+                        No worries at all. Hope you have a great rest of your week!
                     </p>
                     <div class="pt-4">
                         <span class="inline-block px-3 py-1 rounded-full text-[11px] text-stone-600 bg-stone-100 font-mono">
