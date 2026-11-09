@@ -17,9 +17,15 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        \App\Models\SecretNote::create([
+            'token' => 'demo123',
+            'recipient_name' => 'Someone Special',
+            'creator_name' => 'Someone nearby',
+            'creator_hint' => 'Someone in the same room.',
+            'room_context' => 'Same Room',
+            'status' => 'created',
+            'current_step' => 0,
+            'is_destroyed' => false,
         ]);
     }
 }

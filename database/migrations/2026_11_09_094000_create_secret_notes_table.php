@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('recipient_name')->nullable();
             $table->string('creator_name')->nullable();
             $table->string('creator_hint')->nullable();
-            $table->string('room_context')->nullable()->default('Konsinyering Room');
+            $table->string('room_context')->nullable()->default('Same Room');
             $table->enum('status', ['created', 'opened', 'single', 'taken', 'submitted', 'destroyed'])->default('created');
+            $table->unsignedTinyInteger('current_step')->default(0);
             $table->string('relationship_choice')->nullable();
             $table->string('contact_type')->nullable(); // instagram, whatsapp, telegram
             $table->string('contact_value')->nullable();

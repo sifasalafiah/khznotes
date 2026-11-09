@@ -201,14 +201,14 @@
 
                         <!-- Right: Text Content -->
                         <div class="flex-1 min-w-0">
-                            <div class="inline-block px-2 py-0.5 rounded text-[9px] font-mono tracking-widest uppercase bg-rose-50 text-rose-600 mb-1 border border-rose-100 font-semibold">
-                                Just For You
+                            <div class="text-[9px] uppercase tracking-widest text-stone-400 font-medium mb-1">
+                                Personal Note
                             </div>
-                            <h4 class="font-serif font-bold text-base text-stone-800 leading-tight mb-1">
-                                A quiet hello for you.
+                            <h4 class="font-serif font-semibold text-base text-stone-900 leading-tight mb-1">
+                                A note for you.
                             </h4>
                             <p class="text-[11px] text-stone-500 leading-snug line-clamp-2 mb-2 font-light">
-                                Scan once when you have a calm minute. (Single-use note).
+                                Whenever you have a quiet minute.
                             </p>
                             <div class="text-[9px] font-mono text-stone-400">
                                 @{{ selectedNote.recipient_name || 'Private Note' }}
