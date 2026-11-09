@@ -77,6 +77,7 @@
                 max-width: 86mm !important;
                 max-height: 56mm !important;
                 border: 1px solid #d4c8bd !important;
+                border-radius: 0 !important;
                 background: #faf8f5 !important;
                 color: #2e2825 !important;
                 padding: 4.5mm !important;
@@ -312,7 +313,7 @@
                                 <span>FRONT</span>
                                 <span>8.6 × 5.6 cm</span>
                             </div>
-                            <div id="card-front" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-6 sm:p-7 flex flex-col justify-between overflow-hidden shadow-xs select-none">
+                            <div id="card-front" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-none bg-[#faf8f5] border border-stone-300/80 p-6 sm:p-7 flex flex-col justify-between overflow-hidden shadow-xs select-none">
                                 <!-- Center Message -->
                                 <div class="my-auto py-2">
                                     <h3 class="font-serif text-2xl sm:text-[28px] font-medium text-stone-900 tracking-tight leading-snug mb-2">
@@ -336,7 +337,7 @@
                                 <span>BACK</span>
                                 <span>8.6 × 5.6 cm</span>
                             </div>
-                            <div id="card-back" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
+                            <div id="card-back" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-none bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
                                 <!-- Left: Text Instruction & Link (Clean typography, no box, domain-only without http/https) -->
                                 <div class="flex-1 min-w-0 flex flex-col justify-center space-y-1.5 pr-2">
                                     <p class="text-xs sm:text-[13px] text-stone-800 font-normal leading-snug">
