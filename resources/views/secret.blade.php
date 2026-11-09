@@ -149,7 +149,7 @@
             </header>
 
             <!-- Body Text Shimmer -->
-            <div class="flex-1 flex flex-col justify-between overflow-hidden">
+            <div class="flex-1 flex flex-col justify-center overflow-hidden">
                 <div class="space-y-4 my-auto">
                     <div class="h-7 w-16 rounded-md shimmer-pulse mb-3"></div>
                     <div class="space-y-2.5">
@@ -157,15 +157,13 @@
                         <div class="h-3.5 w-[92%] rounded-md shimmer-pulse"></div>
                         <div class="h-3.5 w-[78%] rounded-md shimmer-pulse"></div>
                     </div>
-                    <div class="space-y-2.5 pt-3">
+                    <div class="space-y-2.5 pt-2">
                         <div class="h-3.5 w-[95%] rounded-md shimmer-pulse"></div>
                         <div class="h-3.5 w-[85%] rounded-md shimmer-pulse"></div>
                     </div>
-                </div>
-
-                <!-- Footer Action Shimmer -->
-                <div class="pt-5 sm:pt-8 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 pb-1 sm:pb-0">
-                    <div class="h-11 w-full rounded-xl shimmer-pulse"></div>
+                    <div class="pt-3">
+                        <div class="h-11 w-full rounded-xl shimmer-pulse"></div>
+                    </div>
                 </div>
             </div>
 
@@ -212,9 +210,9 @@
                     <!-- ------------------------------------------ -->
                     <!-- PAGE 1: THE INTRO NOTE                     -->
                     <!-- ------------------------------------------ -->
-                    <div v-if="currentStep === 1" key="step1" class="flex flex-col justify-between h-full flex-1">
+                    <div v-if="currentStep === 1" key="step1" class="flex flex-col justify-center h-full flex-1">
                         <!-- Body Text Centered in Viewport -->
-                        <div class="space-y-4 text-[14px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light my-auto">
+                        <div class="space-y-5 text-[14px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light my-auto">
                             <p class="font-serif text-2xl sm:text-3xl font-semibold text-stone-900 tracking-tight mb-2">
                                 Hey,
                             </p>
@@ -226,21 +224,18 @@
                             <p>
                                 You always look focused, and I didn't want to awkwardly interrupt you while you were busy, so I thought leaving this was simpler.
                             </p>
-                        </div>
 
-                        <!-- Footer Action Area Anchored at Bottom -->
-                        <div class="pt-5 sm:pt-8 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 pb-1 sm:pb-0">
-                            <span class="text-[11px] text-stone-600 font-light hidden sm:inline">
-                                A small hello
-                            </span>
-                            <button 
-                                @click="goToStep(2)"
-                                class="w-full sm:w-auto btn-dark py-3.5 sm:py-2.5 px-6 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.98] shadow-xs">
-                                <span>Continue</span>
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                                </svg>
-                            </button>
+                            <!-- Continue Button directly beneath the text -->
+                            <div class="pt-2">
+                                <button 
+                                    @click="goToStep(2)"
+                                    class="w-full btn-dark py-3.5 px-6 rounded-xl text-xs sm:text-sm font-medium flex items-center justify-center gap-2 active:scale-[0.98] shadow-xs">
+                                    <span>Continue</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -248,8 +243,8 @@
                     <!-- ------------------------------------------ -->
                     <!-- PAGE 2: THE GENTLE ASK / VIBE CHECK        -->
                     <!-- ------------------------------------------ -->
-                    <div v-else-if="currentStep === 2" key="step2" class="flex flex-col justify-between h-full flex-1">
-                        <!-- Body Text -->
+                    <div v-else-if="currentStep === 2" key="step2" class="flex flex-col justify-center h-full flex-1">
+                        <!-- Body Text & Action directly underneath -->
                         <div class="space-y-4 text-[14px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light my-auto">
                             <p>
                                 If you're open to getting coffee or just chatting sometime, I'd love to say hi properly.
@@ -283,18 +278,18 @@
                             <p class="text-[11px] text-stone-600 italic text-center sm:text-left pt-1">
                                 (No worries either way, whichever is true for you!)
                             </p>
-                        </div>
 
-                        <!-- Footer Action Area -->
-                        <div class="pt-5 sm:pt-8 border-t border-stone-100 flex items-center justify-between shrink-0 pb-1 sm:pb-0">
-                            <button 
-                                @click="goToStep(1)"
-                                class="text-xs text-stone-600 hover:text-stone-700 py-1.5 flex items-center gap-1.5 transition-colors">
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                                </svg>
-                                <span>Read previous</span>
-                            </button>
+                            <!-- Back Button directly beneath choices -->
+                            <div class="pt-2 flex items-center justify-center sm:justify-start">
+                                <button 
+                                    @click="goToStep(1)"
+                                    class="text-xs text-stone-600 hover:text-stone-700 py-1.5 flex items-center gap-1.5 transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                    </svg>
+                                    <span>Read previous</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
