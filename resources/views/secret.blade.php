@@ -519,7 +519,7 @@
                         const controller = new AbortController();
                         const timeoutId = setTimeout(() => controller.abort(), 2500);
 
-                        await fetch(`/api/private/${noteData.value.token}/status`, {
+                        await fetch(`/api/notes/${noteData.value.token}/status`, {
                             method: 'POST',
                             signal: controller.signal,
                             headers: {
@@ -575,7 +575,7 @@
                         const controller = new AbortController();
                         const timeoutId = setTimeout(() => controller.abort(), 3500);
 
-                        await fetch(`/api/private/${noteData.value.token}/status`, {
+                        await fetch(`/api/notes/${noteData.value.token}/status`, {
                             method: 'POST',
                             signal: controller.signal,
                             headers: {
@@ -611,7 +611,7 @@
                         const controller = new AbortController();
                         const timeoutId = setTimeout(() => controller.abort(), 3500);
 
-                        await fetch(`/api/private/${noteData.value.token}/status`, {
+                        await fetch(`/api/notes/${noteData.value.token}/status`, {
                             method: 'POST',
                             signal: controller.signal,
                             headers: {
@@ -650,7 +650,7 @@
                         const controller = new AbortController();
                         const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-                        await fetch(`/api/private/${noteData.value.token}/status`, {
+                        await fetch(`/api/notes/${noteData.value.token}/status`, {
                             method: 'POST',
                             signal: controller.signal,
                             headers: {
@@ -694,7 +694,7 @@
 
                 const triggerDestroyServer = async () => {
                     try {
-                        await fetch(`/api/private/${noteData.value.token}/destroy`, {
+                        await fetch(`/api/notes/${noteData.value.token}/destroy`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

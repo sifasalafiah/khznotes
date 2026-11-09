@@ -90,7 +90,7 @@ class SecretNoteController extends Controller
         return response()->json([
             'success' => true,
             'note'    => $note,
-            'url'     => route('private.show', ['token' => $note->token]),
+            'url'     => route('notes.show', ['token' => $note->token]),
         ]);
     }
 

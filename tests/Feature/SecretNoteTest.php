@@ -32,7 +32,7 @@ class SecretNoteTest extends TestCase
         ]);
     }
 
-    public function test_can_view_note_at_private_route(): void
+    public function test_can_view_note_at_notes_route(): void
     {
         SecretNote::create([
             'token' => 'sarah-special',
@@ -43,14 +43,20 @@ class SecretNoteTest extends TestCase
             'status' => 'created',
         ]);
 
-        $response = $this->get('/private/sarah-special');
+        $response = $this->get('/notes/sarah-special');
         $response->assertStatus(200);
     }
 
-    public function test_legacy_secret_route_redirects_to_private(): void
+    public function test_legacy_private_route_redirects_to_notes(): void
+    {
+        $response = $this->get('/private/sarah-special');
+        $response->assertRedirect('/notes/sarah-special');
+    }
+
+    public function test_legacy_secret_route_redirects_to_notes(): void
     {
         $response = $this->get('/secret/sarah-special');
-        $response->assertRedirect('/private/sarah-special');
+        $response->assertRedirect('/notes/sarah-special');
     }
 
     public function test_custom_slug_rejects_duplicate(): void

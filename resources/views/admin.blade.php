@@ -182,7 +182,7 @@
                         <div>
                             <label class="block text-[11px] font-semibold text-stone-600 mb-1">Custom Link / Slug (Optional)</label>
                             <div class="flex items-center rounded-xl bg-stone-50/70 border border-stone-200 focus-within:border-rose-400 focus-within:bg-white transition-all overflow-hidden">
-                                <span class="px-3 py-2.5 text-xs text-stone-400 font-mono bg-stone-100/60 border-r border-stone-200 shrink-0">/private/</span>
+                                <span class="px-3 py-2.5 text-xs text-stone-400 font-mono bg-stone-100/60 border-r border-stone-200 shrink-0">/notes/</span>
                                 <input 
                                     v-model="form.custom_slug" 
                                     type="text" 
@@ -553,7 +553,7 @@
 
                 const getNoteUrl = (token) => {
                     const base = (customBaseUrl.value || window.location.origin).replace(/\/$/, '');
-                    return `${base}/private/${token}`;
+                    return `${base}/notes/${token}`;
                 };
 
                 const formatCardUrl = (token) => {
@@ -710,7 +710,7 @@
                     if (!confirm('Are you sure you want to permanently close this note?')) return;
                     isBurningId.value = note.id;
                     try {
-                        const res = await fetch(`/api/private/${note.token}/destroy`, {
+                        const res = await fetch(`/api/notes/${note.token}/destroy`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
