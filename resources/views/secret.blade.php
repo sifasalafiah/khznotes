@@ -73,6 +73,19 @@
         .btn-dark:hover {
             background: #38322e;
         }
+
+        /* Smooth Subtle Step Transitions */
+        .fade-enter-active, .fade-leave-active {
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .fade-enter-from {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+        .fade-leave-to {
+            opacity: 0;
+            transform: translateY(-4px);
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 selection:bg-stone-200 selection:text-stone-900">
@@ -81,10 +94,10 @@
     <main id="app" v-cloak class="w-full max-w-[380px] sm:max-w-[420px] mx-auto transition-all duration-300">
 
         <!-- ============================================== -->
-        <!-- STATE 1: NOTE DESTROYED / CLOSED               -->
+        <!-- STATE: NOTE DESTROYED / CLOSED                 -->
         <!-- ============================================== -->
         <div v-if="isDestroyed" class="stationery-card rounded-2xl p-7 sm:p-8 text-center">
-            <div class="text-[11px] uppercase tracking-widest text-stone-600 font-medium mb-3">
+            <div class="text-[11px] uppercase tracking-widest text-stone-400 font-medium mb-3">
                 Private Note
             </div>
             <h1 class="font-serif text-2xl sm:text-3xl font-medium text-stone-800 mb-2">
@@ -97,96 +110,137 @@
 
 
         <!-- ============================================== -->
-        <!-- STATE 2: THE PERSONAL MEMO                     -->
+        <!-- STATE: ACTIVE PERSONAL MEMO                    -->
         <!-- ============================================== -->
         <article v-else class="stationery-card rounded-2xl p-6 sm:p-8 relative">
 
             <!-- Top Memo Header -->
-            <header class="flex items-center justify-between pb-4 mb-5 memo-divider text-[11px] text-stone-600 tracking-wider">
+            <header class="flex items-center justify-between pb-3.5 mb-5 memo-divider text-[11px] text-stone-600 tracking-wider">
                 <span class="font-medium uppercase">Personal Note</span>
                 <span>@{{ currentDate }}</span>
             </header>
 
-            <!-- Letter Body -->
-            <div class="space-y-3.5 text-[13px] sm:text-sm leading-relaxed text-stone-700 font-light">
-                <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 mb-1">
-                    Hey,
-                </p>
-
-                <p>
-                    I know this is a bit out of nowhere, but I've noticed you around the room and just wanted to introduce myself.
-                </p>
-
-                <p>
-                    You always look focused, and I didn't want to awkwardly interrupt you while you were busy, so I thought leaving this was simpler.
-                </p>
-
-                <p>
-                    If you're single and open to getting coffee or just chatting sometime, let me know below.
-                </p>
-
-                <p class="text-xs text-stone-600 italic pt-1">
-                    (And if you're already seeing someone, no worries at all—just take it as a friendly compliment and we never have to speak of it haha)
-                </p>
-            </div>
-
-            <!-- Interactivity Section -->
-            <section class="mt-6 pt-5 memo-divider">
+            <transition name="fade" mode="out-in">
 
                 <!-- ------------------------------------------ -->
-                <!-- CHOICE BUTTONS (Initial State)             -->
+                <!-- PAGE 1: THE INTRO NOTE (NO CONFRONTATION)  -->
                 <!-- ------------------------------------------ -->
-                <div v-if="choice === null && !isSubmitted">
-                    <p class="text-xs text-stone-600 mb-3 text-center">
-                        Are you seeing anyone?
-                    </p>
-                    <div class="grid grid-cols-2 gap-2.5">
+                <div v-if="currentStep === 1" key="step1" class="space-y-4">
+                    <div class="space-y-3.5 text-[13px] sm:text-sm leading-relaxed text-stone-700 font-light">
+                        <p class="font-serif text-2xl sm:text-3xl font-semibold text-stone-900 mb-1">
+                            Hey,
+                        </p>
+
+                        <p>
+                            I know this is a bit out of nowhere, but I've noticed you around the room and just wanted to introduce myself.
+                        </p>
+
+                        <p>
+                            You always look focused, and I didn't want to awkwardly interrupt you while you were busy, so I thought leaving this was simpler.
+                        </p>
+                    </div>
+
+                    <div class="pt-4 mt-6 memo-divider flex justify-end">
                         <button 
-                            @click="selectChoice('single')"
-                            :disabled="isSubmitting"
-                            class="btn-choice py-2.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
-                            Single :)
-                        </button>
-                        <button 
-                            @click="selectChoice('taken')"
-                            :disabled="isSubmitting"
-                            class="btn-choice py-2.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
-                            Seeing someone
+                            @click="goToStep(2)"
+                            class="btn-dark py-2 px-4 rounded-xl text-xs font-medium flex items-center gap-1.5 active:scale-[0.98]">
+                            <span>Continue</span>
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                            </svg>
                         </button>
                     </div>
                 </div>
 
+
                 <!-- ------------------------------------------ -->
-                <!-- RESPONSE: TAKEN (Graceful, Low-Key Exit)   -->
+                <!-- PAGE 2: THE GENTLE ASK / VIBE CHECK        -->
                 <!-- ------------------------------------------ -->
-                <div v-else-if="choice === 'taken'" class="text-center py-2 space-y-2">
-                    <p class="font-serif text-lg sm:text-xl font-medium text-stone-800">
+                <div v-else-if="currentStep === 2" key="step2" class="space-y-4">
+                    <div class="space-y-3 text-[13px] sm:text-sm leading-relaxed text-stone-700 font-light">
+                        <p>
+                            If you're open to getting coffee or just chatting sometime, I'd love to say hi properly.
+                        </p>
+
+                        <p class="text-xs text-stone-600 pt-1">
+                            Before that though—just to make sure I'm not overstepping:
+                        </p>
+
+                        <div class="p-4 rounded-xl bg-stone-50 border border-stone-200/70 text-center space-y-3 mt-1">
+                            <p class="text-xs font-medium text-stone-800">
+                                Are you seeing anyone?
+                            </p>
+                            <div class="grid grid-cols-2 gap-2.5">
+                                <button 
+                                    @click="selectChoice('single')"
+                                    :disabled="isSubmitting"
+                                    class="btn-choice py-2.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
+                                    Single :)
+                                </button>
+                                <button 
+                                    @click="selectChoice('taken')"
+                                    :disabled="isSubmitting"
+                                    class="btn-choice py-2.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98]">
+                                    Seeing someone
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-stone-600 italic text-center">
+                            (No worries either way—whichever is true for you!)
+                        </p>
+                    </div>
+
+                    <div class="pt-3 mt-5 memo-divider flex justify-start">
+                        <button 
+                            @click="goToStep(1)"
+                            class="text-[11px] text-stone-600 hover:text-stone-700 underline underline-offset-2 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                            </svg>
+                            <span>previous note</span>
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- ------------------------------------------ -->
+                <!-- PAGE 2B: GRACEFUL EXIT (IF TAKEN)          -->
+                <!-- ------------------------------------------ -->
+                <div v-else-if="currentStep === 'exit_taken'" key="exit_taken" class="text-center py-4 space-y-2.5">
+                    <p class="font-serif text-xl sm:text-2xl font-medium text-stone-800">
                         Totally get it!
                     </p>
                     <p class="text-xs sm:text-sm text-stone-500 font-light leading-relaxed">
                         No worries at all—hope you have a great rest of your week.
                     </p>
-                    <p class="text-[11px] text-stone-600 font-mono pt-2">
+                    <p class="text-[11px] text-stone-600 font-mono pt-3">
                         This note will close quietly.
                     </p>
                 </div>
 
+
                 <!-- ------------------------------------------ -->
-                <!-- RESPONSE: SINGLE -> CONTACT FORM UNFOLDS   -->
+                <!-- PAGE 3: CONTACT FORM (IF SINGLE)           -->
                 <!-- ------------------------------------------ -->
-                <div v-else-if="choice === 'single' && !isSubmitted" class="space-y-4">
+                <div v-else-if="currentStep === 3" key="step3" class="space-y-4">
                     <div class="flex items-center justify-between">
-                        <p class="text-xs text-stone-600">
-                            Nice to meet you. Where can I say hi?
-                        </p>
+                        <div>
+                            <p class="font-serif text-xl font-medium text-stone-900">
+                                Nice to meet you.
+                            </p>
+                            <p class="text-xs text-stone-500 font-light mt-0.5">
+                                Where's best to say hi?
+                            </p>
+                        </div>
                         <button 
-                            @click="choice = null" 
+                            @click="goToStep(2)"
                             class="text-[11px] text-stone-600 hover:text-stone-700 underline underline-offset-2">
                             back
                         </button>
                     </div>
 
-                    <!-- Contact Channel Selector -->
+                    <!-- Channel selector -->
                     <div class="inline-flex p-1 bg-stone-100 rounded-xl text-xs font-medium w-full">
                         <button 
                             type="button" 
@@ -232,22 +286,23 @@
                     </form>
                 </div>
 
+
                 <!-- ------------------------------------------ -->
-                <!-- RESPONSE: SUBMITTED SUCCESS                -->
+                <!-- PAGE 4: SUBMITTED SUCCESS                  -->
                 <!-- ------------------------------------------ -->
-                <div v-else-if="isSubmitted" class="text-center py-2 space-y-2">
-                    <p class="font-serif text-lg sm:text-xl font-medium text-stone-800">
+                <div v-else-if="currentStep === 'submitted'" key="submitted" class="text-center py-4 space-y-2.5">
+                    <p class="font-serif text-xl sm:text-2xl font-medium text-stone-800">
                         Got it.
                     </p>
                     <p class="text-xs sm:text-sm text-stone-500 font-light leading-relaxed">
                         I'll say hi soon! Have a good day ahead.
                     </p>
-                    <p class="text-[11px] text-stone-600 font-mono pt-2">
+                    <p class="text-[11px] text-stone-600 font-mono pt-3">
                         Closing note...
                     </p>
                 </div>
 
-            </section>
+            </transition>
 
         </article>
 
@@ -266,12 +321,11 @@
             setup() {
                 const noteData = ref(window.__NOTE_DATA__ || {});
                 const isDestroyed = ref(noteData.value.isDestroyed || false);
-                const choice = ref(null);
+                const currentStep = ref(1); // Default Page 1: The Intro Note
                 const contactType = ref('instagram');
                 const contactValue = ref('');
                 const recipientNote = ref('');
                 const isSubmitting = ref(false);
-                const isSubmitted = ref(false);
 
                 const currentDate = new Date().toLocaleDateString('en-US', {
                     month: 'short',
@@ -295,12 +349,16 @@
                             'X-CSRF-TOKEN': getCsrfToken(),
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify({ current_step: step })
+                        body: JSON.stringify({ current_step: typeof step === 'number' ? step : 2 })
                     }).catch(e => console.error('Step sync error:', e));
                 };
 
+                const goToStep = (step) => {
+                    currentStep.value = step;
+                    saveStep(step);
+                };
+
                 const selectChoice = async (val) => {
-                    choice.value = val;
                     isSubmitting.value = true;
 
                     try {
@@ -314,22 +372,27 @@
                             body: JSON.stringify({
                                 status: val,
                                 relationship_choice: val,
-                                current_step: val === 'single' ? 2 : 1
+                                current_step: val === 'single' ? 3 : 2
                             })
                         });
 
                         if (val === 'taken') {
+                            currentStep.value = 'exit_taken';
                             setTimeout(() => {
                                 triggerDestroyServer();
                             }, 4000);
                         } else {
-                            saveStep(2);
+                            currentStep.value = 3;
+                            saveStep(3);
                         }
                     } catch (err) {
                         if (val === 'taken') {
+                            currentStep.value = 'exit_taken';
                             setTimeout(() => {
                                 triggerDestroyServer();
                             }, 4000);
+                        } else {
+                            currentStep.value = 3;
                         }
                     } finally {
                         isSubmitting.value = false;
@@ -366,13 +429,13 @@
                             });
                         }
 
-                        isSubmitted.value = true;
+                        currentStep.value = 'submitted';
 
                         setTimeout(() => {
                             triggerDestroyServer();
                         }, 4000);
                     } catch (err) {
-                        isSubmitted.value = true;
+                        currentStep.value = 'submitted';
                         setTimeout(() => {
                             triggerDestroyServer();
                         }, 4000);
@@ -401,28 +464,30 @@
                 onMounted(() => {
                     if (isDestroyed.value) return;
 
-                    // Resume step if previously answered single
+                    // Resume step if user previously advanced
                     let localStep = null;
                     try {
                         localStep = localStorage.getItem('secret_step_' + noteData.value.token);
                     } catch (e) {}
 
-                    const step = noteData.value.currentStep || (localStep ? parseInt(localStep) : 0);
-                    if (step >= 2) {
-                        choice.value = 'single';
+                    const savedStep = noteData.value.currentStep || (localStep ? parseInt(localStep) : 1);
+                    if (savedStep && savedStep > 1) {
+                        currentStep.value = savedStep;
+                    } else {
+                        currentStep.value = 1;
                     }
                 });
 
                 return {
                     noteData,
                     isDestroyed,
-                    choice,
+                    currentStep,
                     contactType,
                     contactValue,
                     recipientNote,
                     isSubmitting,
-                    isSubmitted,
                     currentDate,
+                    goToStep,
                     selectChoice,
                     submitContact
                 };
