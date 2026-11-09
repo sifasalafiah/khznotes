@@ -309,30 +309,23 @@
                         <!-- FRONT SIDE (Sisi Depan) -->
                         <div v-show="cardSide === 'front' || cardSide === 'both'" class="space-y-1.5">
                             <div class="flex items-center justify-between text-[10px] text-stone-500 font-mono px-1">
-                                <span>SIDE A &bull; FRONT (COVER)</span>
+                                <span>FRONT</span>
                                 <span>85.6 × 54 mm</span>
                             </div>
-                            <div id="card-front" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-5 sm:p-6 flex flex-col justify-between overflow-hidden shadow-xs select-none">
-                                <div class="absolute inset-2 rounded-xl border border-stone-200/60 pointer-events-none"></div>
-
-                                <div class="flex items-center justify-between relative z-10 text-[9px] uppercase tracking-[0.2em] text-stone-500 font-medium">
-                                    <span>Private Note</span>
-                                    <span class="w-1.5 h-1.5 rounded-full bg-stone-300"></span>
-                                    <span>Personal Memo</span>
-                                </div>
-
-                                <div class="relative z-10 my-auto py-2">
-                                    <h3 class="font-serif text-2xl sm:text-[26px] font-medium text-stone-900 tracking-tight leading-snug mb-2">
+                            <div id="card-front" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-6 sm:p-7 flex flex-col justify-between overflow-hidden shadow-xs select-none">
+                                <!-- Center Message -->
+                                <div class="my-auto py-2">
+                                    <h3 class="font-serif text-2xl sm:text-[28px] font-medium text-stone-900 tracking-tight leading-snug mb-2">
                                         A note for you.
                                     </h3>
-                                    <p class="text-xs sm:text-[13px] text-stone-600 font-light leading-relaxed">
+                                    <p class="text-xs sm:text-[13.5px] text-stone-600 font-light leading-relaxed">
                                         Whenever you have a quiet minute to yourself.
                                     </p>
                                 </div>
 
-                                <div class="flex items-center justify-between relative z-10 text-[9px] text-stone-500 font-mono tracking-wider">
-                                    <span>@{{ selectedNote.recipient_name || 'Someone Special' }}</span>
-                                    <span class="text-stone-500">Scan on back &rarr;</span>
+                                <!-- Bottom Line -->
+                                <div class="text-[10px] text-stone-500 font-mono tracking-wider text-right">
+                                    <span>Scan on back &rarr;</span>
                                 </div>
                             </div>
                         </div>
@@ -340,41 +333,28 @@
                         <!-- BACK SIDE (Sisi Belakang dengan QR Code) -->
                         <div v-show="cardSide === 'back' || cardSide === 'both'" class="space-y-1.5">
                             <div class="flex items-center justify-between text-[10px] text-stone-500 font-mono px-1">
-                                <span>SIDE B &bull; BACK (QR CODE)</span>
+                                <span>BACK</span>
                                 <span>85.6 × 54 mm</span>
                             </div>
                             <div id="card-back" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
-                                <div class="absolute inset-2 rounded-xl border border-stone-200/60 pointer-events-none"></div>
-
-                                <div class="relative z-10 flex-1 min-w-0 flex flex-col justify-between h-full py-1">
-                                    <div>
-                                        <div class="text-[9px] uppercase tracking-[0.2em] text-stone-500 font-medium mb-1.5">
-                                            Scan to Open
-                                        </div>
-                                        <p class="font-serif text-base sm:text-lg font-medium text-stone-900 leading-tight mb-1">
-                                            Open with camera.
-                                        </p>
-                                        <p class="text-[11px] text-stone-600 font-light leading-snug">
-                                            Point your phone camera at the QR code to read this note privately.
-                                        </p>
-                                    </div>
-
-                                    <div class="pt-2">
-                                        <div class="text-[8.5px] font-mono text-stone-600 truncate mb-0.5">
+                                <!-- Left: Text Instruction & Link -->
+                                <div class="flex-1 min-w-0 flex flex-col justify-center space-y-2.5 pr-2">
+                                    <p class="text-xs sm:text-[12.5px] text-stone-700 font-light leading-relaxed">
+                                        Point your phone camera at the QR code, or visit this link:
+                                    </p>
+                                    <div class="p-2 rounded-xl bg-white/90 border border-stone-200/80">
+                                        <p class="text-[9.5px] font-mono text-stone-700 break-all leading-tight select-all">
                                             @{{ getNoteUrl(selectedNote.token) }}
-                                        </div>
-                                        <div class="text-[8px] text-stone-500 uppercase tracking-wider">
-                                            One-time link &bull; Closes after completion
-                                        </div>
+                                        </p>
                                     </div>
                                 </div>
 
-                                <div class="relative z-10 shrink-0 bg-white p-2 rounded-xl border border-stone-200/90 shadow-2xs flex flex-col items-center justify-center">
+                                <!-- Right: Crisp Clean QR Code -->
+                                <div class="shrink-0 bg-white p-2.5 rounded-xl border border-stone-200/90 shadow-2xs flex items-center justify-center">
                                     <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
                                         <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-full h-full object-contain block">
                                         <canvas v-show="!qrDataUrl" id="qr-canvas" class="w-24 h-24 sm:w-28 sm:h-28 block"></canvas>
                                     </div>
-                                    <span class="text-[8px] uppercase tracking-widest text-stone-500 mt-1 font-medium font-mono">Scan Me</span>
                                 </div>
                             </div>
                         </div>
