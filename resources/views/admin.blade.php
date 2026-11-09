@@ -149,6 +149,19 @@
                                 class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50/70 border border-stone-200 text-xs text-stone-800 focus:border-rose-400 focus:bg-white focus:outline-none transition-all">
                         </div>
 
+                        <div>
+                            <label class="block text-[11px] font-semibold text-stone-600 mb-1">Custom Link / Slug (Optional)</label>
+                            <div class="flex items-center rounded-xl bg-stone-50/70 border border-stone-200 focus-within:border-rose-400 focus-within:bg-white transition-all overflow-hidden">
+                                <span class="px-3 py-2.5 text-xs text-stone-400 font-mono bg-stone-100/60 border-r border-stone-200 shrink-0">/private/</span>
+                                <input 
+                                    v-model="form.custom_slug" 
+                                    type="text" 
+                                    placeholder="e.g. for-sarah or leave empty" 
+                                    class="w-full px-3 py-2.5 bg-transparent text-xs font-mono text-stone-800 focus:outline-none">
+                            </div>
+                            <p v-if="slugError" class="text-[10px] text-rose-500 mt-1 font-medium">@{{ slugError }}</p>
+                        </div>
+
                         <button 
                             type="submit" 
                             :disabled="isCreating"
@@ -395,8 +408,10 @@
                     room_context: 'Same Room',
                     recipient_name: '',
                     creator_name: '',
-                    creator_hint: ''
+                    creator_hint: '',
+                    custom_slug: ''
                 });
+                const slugError = ref('');
 
                 const getCsrfToken = () => {
                     const el = document.querySelector('meta[name="csrf-token"]');
@@ -405,7 +420,7 @@
 
                 const getNoteUrl = (token) => {
                     const base = (customBaseUrl.value || window.location.origin).replace(/\/$/, '');
-                    return `${base}/secret/${token}`;
+                    return `${base}/private/${token}`;
                 };
 
                 const renderQr = (text) => {
@@ -456,6 +471,7 @@
 
                 const createNote = async () => {
                     isCreating.value = true;
+                    slugError.value = '';
                     try {
                         const res = await fetch('/api/notes', {
                             method: 'POST',
@@ -467,15 +483,19 @@
                             body: JSON.stringify(form.value)
                         });
 
-                        if (res.ok) {
-                            const data = await res.json();
+                        const data = await res.json();
+                        if (res.ok && data.success) {
                             notes.value.unshift(data.note);
                             selectNote(data.note);
                             form.value.recipient_name = '';
                             form.value.creator_name = '';
                             form.value.creator_hint = '';
+                            form.value.custom_slug = '';
+                        } else {
+                            slugError.value = data.message || data.errors?.custom_slug?.[0] || 'Failed to create note.';
                         }
                     } catch (e) {
+                        slugError.value = 'Network error while creating note.';
                         console.error('Failed to create note:', e);
                     } finally {
                         isCreating.value = false;
@@ -485,7 +505,7 @@
                 const burnNote = async (note) => {
                     if (!confirm('Are you sure you want to permanently close this note?')) return;
                     try {
-                        const res = await fetch(`/api/secret/${note.token}/destroy`, {
+                        const res = await fetch(`/api/private/${note.token}/destroy`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -553,6 +573,7 @@
                     notes,
                     selectedNote,
                     form,
+                    slugError,
                     customBaseUrl,
                     isRefreshing,
                     isCreating,

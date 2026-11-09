@@ -463,7 +463,7 @@
                         localStorage.setItem('secret_step_' + noteData.value.token, step);
                     } catch(e) {}
 
-                    fetch(`/api/secret/${noteData.value.token}/status`, {
+                    fetch(`/api/private/${noteData.value.token}/status`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -483,7 +483,7 @@
                     isSubmitting.value = true;
 
                     try {
-                        await fetch(`/api/secret/${noteData.value.token}/status`, {
+                        await fetch(`/api/private/${noteData.value.token}/status`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -525,7 +525,7 @@
                     isSubmitting.value = true;
 
                     try {
-                        await fetch(`/api/secret/${noteData.value.token}/status`, {
+                        await fetch(`/api/private/${noteData.value.token}/status`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -567,7 +567,7 @@
 
                 const triggerDestroyServer = async () => {
                     try {
-                        await fetch(`/api/secret/${noteData.value.token}/destroy`, {
+                        await fetch(`/api/private/${noteData.value.token}/destroy`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

@@ -24,13 +24,26 @@ class SecretNoteController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'custom_slug'    => 'nullable|string|max:64|regex:/^[a-zA-Z0-9_\-]+$/|unique:secret_notes,token',
             'recipient_name' => 'nullable|string|max:100',
             'creator_name'   => 'nullable|string|max:100',
             'creator_hint'   => 'nullable|string|max:255',
             'room_context'   => 'nullable|string|max:150',
+        ], [
+            'custom_slug.unique' => 'This slug is already taken. Please choose another one.',
+            'custom_slug.regex'  => 'Slug can only contain letters, numbers, dashes, and underscores.',
         ]);
 
-        $token = Str::random(12);
+        $customSlug = trim($validated['custom_slug'] ?? '');
+        $token = !empty($customSlug) ? Str::slug($customSlug) : Str::random(12);
+
+        // Double check uniqueness after slugify
+        if (SecretNote::where('token', $token)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This slug is already taken. Please choose another one.'
+            ], 422);
+        }
 
         $note = SecretNote::create([
             'token'          => $token,
@@ -45,7 +58,7 @@ class SecretNoteController extends Controller
         return response()->json([
             'success' => true,
             'note'    => $note,
-            'url'     => route('secret.show', ['token' => $note->token]),
+            'url'     => route('private.show', ['token' => $note->token]),
         ]);
     }
 
