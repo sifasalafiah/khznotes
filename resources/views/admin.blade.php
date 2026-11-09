@@ -112,7 +112,10 @@
                 <!-- Generator Box -->
                 <div class="p-6 rounded-3xl bg-white border border-stone-200/80 shadow-sm">
                     <h2 class="text-sm font-bold text-stone-800 mb-1 flex items-center gap-2">
-                        <span>✨ Create a New Note</span>
+                        <svg class="w-4 h-4 text-stone-600 stroke-[1.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                        <span>Create a New Note</span>
                     </h2>
                     <p class="text-xs text-stone-500 mb-5 font-light">
                         Generates a unique link and QR code. It will resume automatically if she pauses, and closes permanently after completion.
@@ -240,7 +243,10 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-sm font-bold text-stone-800 flex items-center gap-2">
-                            <span>📡 Live MySQL Responses</span>
+                            <svg class="w-4 h-4 text-stone-600 stroke-[1.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+                            </svg>
+                            <span>Live MySQL Responses</span>
                             <span class="text-xs font-mono font-normal text-stone-400">(@{{ notes.length }} notes total)</span>
                         </h2>
                         <p class="text-xs text-stone-500 font-light">Auto-refreshing every 3s to capture views, single/taken status, and contacts.</p>
@@ -292,11 +298,18 @@
                         <div v-if="note.contact_value" class="mb-3 p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 via-white to-white border border-emerald-300 shadow-sm">
                             <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-1 flex items-center gap-1.5">
                                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
-                                <span>🎉 Contact Received!</span>
+                                <span>Contact Received</span>
                             </div>
                             <div class="flex items-center justify-between">
                                 <div class="font-mono text-sm font-bold text-stone-800 flex items-center gap-2">
-                                    <span>@{{ note.contact_type === 'instagram' ? '📸' : '💬' }}</span>
+                                    <svg v-if="note.contact_type === 'instagram'" class="w-4 h-4 text-stone-600 stroke-[1.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                                    </svg>
+                                    <svg v-else class="w-4 h-4 text-stone-600 stroke-[1.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a.75.75 0 01-.84-.84c.162-.962.36-1.92.593-2.868C3.762 15.65 3 13.916 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                                    </svg>
                                     <span>@{{ note.contact_value }}</span>
                                 </div>
                                 <a 

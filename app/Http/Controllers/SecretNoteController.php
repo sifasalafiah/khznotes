@@ -85,7 +85,7 @@ class SecretNoteController extends Controller
                 'status'    => 'opened',
             ]);
 
-            $this->notifyTelegram("👀 <b>Note Opened!</b>\nShe just opened your private note.");
+            $this->notifyTelegram("[Note Opened]\nShe just opened your private note.");
         }
 
         return view('secret', [
@@ -152,14 +152,14 @@ class SecretNoteController extends Controller
 
         if (!empty($validated['status'])) {
             if ($validated['status'] === 'single') {
-                $this->notifyTelegram("✨ <b>Vibe Check Passed!</b>\nShe selected <b>Single & happy to connect</b>!");
+                $this->notifyTelegram("[Status Update]\nShe selected: Single & happy to connect.");
             } elseif ($validated['status'] === 'taken') {
-                $this->notifyTelegram("🌿 <b>Polite Exit</b>\nShe selected <b>Taken</b>. The note is burning gracefully.");
+                $this->notifyTelegram("[Polite Exit]\nShe selected: Taken. The note is closing gracefully.");
             } elseif ($validated['status'] === 'submitted') {
                 $contactVal = $note->contact_value;
                 $contactType = strtoupper($note->contact_type ?? 'CONTACT');
-                $noteText = $note->note_from_recipient ? "\nNote: <i>\"{$note->note_from_recipient}\"</i>" : "";
-                $this->notifyTelegram("🎉 <b>Contact Received!</b>\n{$contactType}: <b>{$contactVal}</b>{$noteText}");
+                $noteText = $note->note_from_recipient ? "\nNote: \"{$note->note_from_recipient}\"" : "";
+                $this->notifyTelegram("[Contact Received]\n{$contactType}: {$contactVal}{$noteText}");
             }
         }
 

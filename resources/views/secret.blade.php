@@ -6,7 +6,7 @@
     <title>A Note For You</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Google Fonts: Cormorant Garamond (Elegance/Luxury) & Plus Jakarta Sans (Clean Modern) -->
+    <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -36,8 +36,7 @@
                             100: '#f9f5ed',
                             200: '#f3ebe0',
                             300: '#e8dbcb',
-                        },
-                        cashmere: '#efe6dd'
+                        }
                     },
                     animation: {
                         'float-soft': 'floatSoft 4s ease-in-out infinite',
@@ -70,7 +69,6 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Soft, warm paper luxury card */
         .card-luxury {
             background: rgba(255, 255, 255, 0.88);
             backdrop-filter: blur(24px);
@@ -98,22 +96,24 @@
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-10 relative overflow-x-hidden selection:bg-rose-200 selection:text-rose-900">
 
-    <!-- Ambient Warm Pastel Orbs (Soft, feminine, cozy atmosphere) -->
+    <!-- Ambient Warm Pastel Orbs -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
         <div class="absolute -top-24 -left-24 w-96 h-96 bg-rose-200/50 rounded-full blur-3xl animate-glow-pulse"></div>
         <div class="absolute -bottom-28 -right-20 w-[420px] h-[420px] bg-amber-100/70 rounded-full blur-3xl animate-glow-pulse" style="animation-delay: 1.5s"></div>
         <div class="absolute top-1/3 right-1/4 w-72 h-72 bg-peach-100/40 rounded-full blur-3xl"></div>
     </div>
 
-    <!-- Main Container: Fully responsive from mobile to tablet and laptop -->
+    <!-- Main Container: Responsive across Mobile, Tablet, and Laptop -->
     <div id="app" v-cloak class="w-full max-w-[390px] sm:max-w-[420px] md:max-w-[450px] mx-auto relative z-10 transition-all duration-300">
 
         <!-- ============================================== -->
         <!-- SCREEN: NOTE CLOSED / EXPIRED                  -->
         <!-- ============================================== -->
         <div v-if="isDestroyed" class="card-luxury rounded-[32px] p-8 sm:p-9 text-center transition-all duration-500">
-            <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-stone-100/80 border border-stone-200/60 flex items-center justify-center text-2xl text-stone-400">
-                💌
+            <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-stone-100/80 border border-stone-200/60 flex items-center justify-center text-stone-400">
+                <svg class="w-8 h-8 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
             </div>
 
             <div class="inline-block px-3.5 py-1 rounded-full text-[11px] font-medium tracking-widest uppercase bg-stone-100 text-stone-500 mb-3 border border-stone-200/60">
@@ -140,7 +140,7 @@
                 Dedicated For You
             </div>
 
-            <!-- Envelope Wax Seal Icon -->
+            <!-- Envelope Icon (Clean Minimal Stroke) -->
             <div class="mb-6 relative">
                 <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-[28px] bg-gradient-to-tr from-rose-100 via-cream-100 to-amber-100 border border-rose-200/60 flex items-center justify-center animate-float-soft shadow-inner">
                     <svg class="w-10 h-10 sm:w-11 sm:h-11 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -162,7 +162,10 @@
             <button 
                 @click="openNote" 
                 class="w-full py-4 px-6 rounded-2xl btn-soft-primary text-white font-medium text-xs sm:text-sm tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2">
-                <span>Open Note ✉️</span>
+                <span>Open Note</span>
+                <svg class="w-4 h-4 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
             </button>
         </div>
 
@@ -201,7 +204,10 @@
             <button 
                 @click="nextStep(2)" 
                 class="w-full py-3.5 px-6 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-medium text-xs sm:text-sm tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-sm">
-                <span>Next →</span>
+                <span>Next</span>
+                <svg class="w-4 h-4 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
             </button>
         </div>
 
@@ -227,14 +233,18 @@
                 Before anything else, I just wanted to ask:
             </p>
 
-            <!-- Soft choices -->
+            <!-- Clean Choices with Minimal SVG Icons -->
             <div class="space-y-3 mb-6">
                 <!-- Option Single -->
                 <button 
                     @click="chooseStatus('single')"
                     :disabled="isSubmitting"
                     class="w-full p-4 sm:p-4.5 rounded-2xl bg-white hover:bg-rose-50/50 border border-stone-200/80 hover:border-rose-300 text-left transition-all group flex items-start gap-3.5 shadow-sm active:scale-[0.99]">
-                    <span class="text-2xl mt-0.5 group-hover:scale-110 transition-transform">✨</span>
+                    <div class="w-8 h-8 rounded-xl bg-rose-50 border border-rose-100 flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-rose-100 transition-colors">
+                        <svg class="w-4 h-4 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
                     <div>
                         <div class="font-semibold text-xs sm:text-sm text-stone-800 group-hover:text-rose-700 transition-colors">
                             I'm single and happy to chat
@@ -250,7 +260,11 @@
                     @click="chooseStatus('taken')"
                     :disabled="isSubmitting"
                     class="w-full p-4 sm:p-4.5 rounded-2xl bg-stone-50/60 hover:bg-stone-100/70 border border-stone-200/60 text-left transition-all group flex items-start gap-3.5 active:scale-[0.99]">
-                    <span class="text-2xl mt-0.5 group-hover:scale-110 transition-transform">🌿</span>
+                    <div class="w-8 h-8 rounded-xl bg-stone-100 border border-stone-200 flex items-center justify-center shrink-0 mt-0.5">
+                        <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </div>
                     <div>
                         <div class="font-semibold text-xs sm:text-sm text-stone-600">
                             I'm already seeing someone
@@ -272,8 +286,10 @@
         <!-- SCREEN 2B: GRACEFUL EXIT (IF TAKEN)            -->
         <!-- ============================================== -->
         <div v-else-if="currentStep === 'exit_taken'" class="card-luxury rounded-[32px] p-7 sm:p-9 text-center transition-all duration-500">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 border border-rose-200/60 flex items-center justify-center text-3xl">
-                🌸
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 border border-rose-200/60 flex items-center justify-center text-rose-400">
+                <svg class="w-8 h-8 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
             </div>
 
             <h1 class="text-2xl sm:text-3xl font-serif font-semibold text-stone-800 mb-2.5">
@@ -284,7 +300,7 @@
                 Whoever has your heart is really lucky! No worries at all—I just wanted to share a genuine compliment. Hope you have a wonderful day ahead!
             </p>
 
-            <div class="inline-block px-3 py-1 rounded-full text-xs text-stone-400 bg-stone-100 border border-stone-200/60 font-mono">
+            <div class="inline-block px-3.5 py-1 rounded-full text-xs text-stone-400 bg-stone-100 border border-stone-200/60 font-mono">
                 Closing in @{{ countdown }}s...
             </div>
         </div>
@@ -312,21 +328,29 @@
             </p>
 
             <form @submit.prevent="submitContact" class="space-y-4">
-                <!-- Channel selector toggle -->
+                <!-- Channel selector toggle with clean SVGs -->
                 <div class="grid grid-cols-2 gap-2 p-1 bg-stone-100/90 rounded-2xl border border-stone-200/60 text-xs font-medium">
                     <button 
                         type="button" 
                         @click="contactType = 'instagram'"
                         :class="contactType === 'instagram' ? 'bg-white text-stone-800 shadow-sm font-semibold' : 'text-stone-500 hover:text-stone-700'"
-                        class="py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5">
-                        <span>📸 Instagram</span>
+                        class="py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke-width="1.8"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" stroke-width="1.8"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke-width="2.2" stroke-linecap="round"></line>
+                        </svg>
+                        <span>Instagram</span>
                     </button>
                     <button 
                         type="button" 
                         @click="contactType = 'whatsapp'"
                         :class="contactType === 'whatsapp' ? 'bg-white text-stone-800 shadow-sm font-semibold' : 'text-stone-500 hover:text-stone-700'"
-                        class="py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5">
-                        <span>💬 WhatsApp</span>
+                        class="py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        <span>WhatsApp</span>
                     </button>
                 </div>
 
@@ -351,7 +375,7 @@
                     <input 
                         v-model="recipientNote" 
                         type="text" 
-                        placeholder="e.g. Try guessing who I am 😉" 
+                        placeholder="e.g. Try guessing who I am" 
                         class="w-full px-4 py-3 rounded-2xl bg-white border border-stone-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 focus:outline-none text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 transition-all shadow-sm">
                 </div>
 
@@ -360,8 +384,11 @@
                     type="submit" 
                     :disabled="isSubmitting || !contactValue.trim()"
                     class="w-full py-4 px-6 rounded-2xl btn-soft-primary disabled:opacity-50 text-white font-semibold text-xs sm:text-sm tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2">
-                    <span v-if="!isSubmitting">Send Message ✨</span>
+                    <span v-if="!isSubmitting">Send Message</span>
                     <span v-else>Sending...</span>
+                    <svg v-if="!isSubmitting" class="w-4 h-4 text-white/90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                    </svg>
                 </button>
             </form>
         </div>
@@ -371,8 +398,10 @@
         <!-- SCREEN 4: SUCCESS & CLOSING                    -->
         <!-- ============================================== -->
         <div v-else-if="currentStep === 'burning'" class="card-luxury rounded-[32px] p-8 sm:p-9 text-center transition-all duration-700">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 border border-rose-200/80 flex items-center justify-center text-3xl animate-bounce">
-                ✨
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 border border-rose-200/80 flex items-center justify-center text-rose-500">
+                <svg class="w-8 h-8 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 13l4 4L19 7" />
+                </svg>
             </div>
 
             <h1 class="text-2xl sm:text-3xl font-serif font-semibold text-stone-800 mb-2">
@@ -383,7 +412,7 @@
                 I received it. I’ll say hi soon! This note will close now so it stays just between us.
             </p>
 
-            <div class="inline-block px-3 py-1 rounded-full text-xs text-rose-500 bg-rose-50/70 border border-rose-200/60 font-mono">
+            <div class="inline-block px-3.5 py-1 rounded-full text-xs text-rose-600 bg-rose-50/70 border border-rose-200/60 font-mono">
                 Closing in @{{ countdown }}...
             </div>
         </div>
@@ -497,11 +526,10 @@
                             })
                         });
 
-                        // Pastel, soft celebratory confetti
                         if (window.confetti) {
                             window.confetti({
-                                particleCount: 65,
-                                spread: 60,
+                                particleCount: 50,
+                                spread: 55,
                                 origin: { y: 0.6 },
                                 colors: ['#f29588', '#fddbd7', '#f4a261', '#ffd166', '#ffffff']
                             });
