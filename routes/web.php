@@ -3,9 +3,9 @@
 use App\Http\Controllers\SecretNoteController;
 use Illuminate\Support\Facades\Route;
 
-// Root URL is blank / 404 (Discrete disguise)
+// Root URL: Clean, calm public disguise page
 Route::get('/', function () {
-    abort(404);
+    return view('landing');
 });
 
 // Protected Studio Dashboard
