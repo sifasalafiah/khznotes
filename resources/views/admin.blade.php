@@ -72,10 +72,10 @@
                 padding: 10mm 0 !important;
             }
             .print-card-exact {
-                width: 85.6mm !important;
-                height: 53.98mm !important;
-                max-width: 85.6mm !important;
-                max-height: 53.98mm !important;
+                width: 86mm !important;
+                height: 56mm !important;
+                max-width: 86mm !important;
+                max-height: 56mm !important;
                 border: 1px solid #d4c8bd !important;
                 background: #faf8f5 !important;
                 color: #2e2825 !important;
@@ -203,16 +203,16 @@
                 </div>
 
 
-                <!-- Physical Printable Card Preview (85.6mm x 54mm e-Money / Brizzi size) -->
+                <!-- Physical Printable Card Preview (8.6cm x 5.6cm size) -->
                 <div v-if="selectedNote" class="space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div>
                             <h3 class="text-xs font-bold uppercase tracking-wider text-stone-700 flex items-center gap-1.5">
                                 <span>Boutique Physical Card</span>
-                                <span class="text-[10px] px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 font-mono font-medium">85.6 × 54 mm</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 font-mono font-medium">8.6 × 5.6 cm</span>
                             </h3>
                             <p class="text-[11px] text-stone-500 font-light mt-0.5">
-                                Standard ID-1 size (Brizzi / e-Money). Two-sided layout with instant PNG download.
+                                Standard 8.6 × 5.6 cm card size. Two-sided layout with instant PNG download.
                             </p>
                         </div>
 
@@ -223,7 +223,7 @@
                             <svg class="w-3.5 h-3.5 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
                             </svg>
-                            <span>Print Both Sides</span>
+                            <span>Print Both Sides (8.6 × 5.6 cm)</span>
                         </button>
                     </div>
 
@@ -303,16 +303,16 @@
                         </div>
                     </div>
 
-                    <!-- CARD DISPLAY CONTAINER (Exact Brizzi / e-Money 85.6mm x 54mm Aspect Ratio) -->
+                    <!-- CARD DISPLAY CONTAINER (Exact 8.6cm x 5.6cm / 86mm x 56mm Aspect Ratio) -->
                     <div id="printable-cards-container" class="space-y-4">
 
                         <!-- FRONT SIDE (Sisi Depan) -->
                         <div v-show="cardSide === 'front' || cardSide === 'both'" class="space-y-1.5">
                             <div class="flex items-center justify-between text-[10px] text-stone-500 font-mono px-1">
                                 <span>FRONT</span>
-                                <span>85.6 × 54 mm</span>
+                                <span>8.6 × 5.6 cm</span>
                             </div>
-                            <div id="card-front" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-6 sm:p-7 flex flex-col justify-between overflow-hidden shadow-xs select-none">
+                            <div id="card-front" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-6 sm:p-7 flex flex-col justify-between overflow-hidden shadow-xs select-none">
                                 <!-- Center Message -->
                                 <div class="my-auto py-2">
                                     <h3 class="font-serif text-2xl sm:text-[28px] font-medium text-stone-900 tracking-tight leading-snug mb-2">
@@ -334,9 +334,9 @@
                         <div v-show="cardSide === 'back' || cardSide === 'both'" class="space-y-1.5">
                             <div class="flex items-center justify-between text-[10px] text-stone-500 font-mono px-1">
                                 <span>BACK</span>
-                                <span>85.6 × 54 mm</span>
+                                <span>8.6 × 5.6 cm</span>
                             </div>
-                            <div id="card-back" class="print-card-exact relative w-full aspect-[856/540] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
+                            <div id="card-back" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-2xl bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
                                 <!-- Left: Text Instruction & Link (Clean typography, no box, domain-only without http/https) -->
                                 <div class="flex-1 min-w-0 flex flex-col justify-center space-y-1.5 pr-2">
                                     <p class="text-xs sm:text-[13px] text-stone-800 font-normal leading-snug">
