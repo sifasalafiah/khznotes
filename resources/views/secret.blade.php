@@ -38,13 +38,16 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Clean Luxury Stationery Card */
-        .stationery-card {
-            background: #ffffff;
-            border: 1px solid #ebdcd0;
-            box-shadow: 
-                0 2px 4px rgba(0, 0, 0, 0.02),
-                0 20px 40px -15px rgba(80, 60, 50, 0.07);
+        /* Clean Luxury Stationery Card (Desktop & Tablet only; borderless on mobile) */
+        @media (min-width: 640px) {
+            .stationery-card {
+                background: #ffffff;
+                border: 1px solid #ebdcd0;
+                box-shadow: 
+                    0 2px 4px rgba(0, 0, 0, 0.02),
+                    0 20px 40px -15px rgba(80, 60, 50, 0.07);
+                border-radius: 1.5rem;
+            }
         }
 
         /* Subtle separator line */
@@ -54,13 +57,14 @@
 
         /* Understated Action Buttons */
         .btn-choice {
-            background: #faf8f5;
+            background: #ffffff;
             border: 1px solid #e2d6ca;
             color: #3b322e;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
             transition: all 0.2s ease;
         }
         .btn-choice:hover {
-            background: #f1ebd8;
+            background: #faf7f2;
             border-color: #cfbeae;
             color: #1a1614;
         }
@@ -88,15 +92,15 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-10 selection:bg-stone-200 selection:text-stone-900">
+<body class="min-h-screen flex flex-col justify-center sm:items-center p-0 sm:p-6 md:p-10 selection:bg-stone-200 selection:text-stone-900">
 
-    <!-- Main Container: Responsive from small mobile (360px) to tablet and laptop -->
-    <main id="app" v-cloak class="w-full max-w-[400px] sm:max-w-[430px] md:max-w-[460px] mx-auto transition-all duration-300 my-auto">
+    <!-- Main Container: Seamless borderless page on mobile; Elegant stationery card on tablet/desktop -->
+    <main id="app" v-cloak class="w-full max-w-full sm:max-w-[430px] md:max-w-[460px] mx-auto min-h-screen sm:min-h-0 flex flex-col justify-center px-6 py-8 sm:p-0 transition-all duration-300">
 
         <!-- ============================================== -->
         <!-- STATE: NOTE DESTROYED / CLOSED                 -->
         <!-- ============================================== -->
-        <div v-if="isDestroyed" class="stationery-card rounded-3xl p-8 sm:p-10 text-center">
+        <div v-if="isDestroyed" class="stationery-card sm:rounded-3xl p-6 sm:p-10 text-center my-auto">
             <div class="text-[11px] uppercase tracking-widest text-stone-600 font-medium mb-4">
                 Private Note
             </div>
@@ -112,7 +116,7 @@
         <!-- ============================================== -->
         <!-- STATE: ACTIVE PERSONAL MEMO                    -->
         <!-- ============================================== -->
-        <article v-else class="stationery-card rounded-3xl p-6 sm:p-8 md:p-9 relative flex flex-col justify-between">
+        <article v-else class="stationery-card sm:rounded-3xl p-0 sm:p-8 md:p-9 relative flex flex-col justify-between my-auto">
 
             <!-- Top Memo Header: Clean & Balanced -->
             <header class="flex items-center justify-between pb-4 mb-6 sm:mb-7 stationery-line text-[11px] text-stone-600 tracking-wider">
@@ -173,12 +177,12 @@
                             Before that though, just to make sure I'm not overstepping:
                         </p>
 
-                        <!-- Choice Card with Generous Touch Targets -->
-                        <div class="p-5 rounded-2xl bg-stone-50/80 border border-stone-200/70 text-center space-y-3.5 mt-2 shadow-2xs">
-                            <p class="text-xs sm:text-[13px] font-medium text-stone-800">
+                        <!-- Question & Choices Flowing Seamlessly -->
+                        <div class="space-y-3 pt-2">
+                            <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 text-center sm:text-left">
                                 Are you seeing anyone?
                             </p>
-                            <div class="grid grid-cols-2 gap-3">
+                            <div class="grid grid-cols-2 gap-3 pt-1">
                                 <button 
                                     @click="selectChoice('single')"
                                     :disabled="isSubmitting"
@@ -194,7 +198,7 @@
                             </div>
                         </div>
 
-                        <p class="text-[11px] text-stone-600 italic text-center pt-1">
+                        <p class="text-[11px] text-stone-600 italic text-center sm:text-left pt-1">
                             (No worries either way, whichever is true for you!)
                         </p>
                     </div>
@@ -252,19 +256,19 @@
                     </div>
 
                     <!-- Channel selector -->
-                    <div class="grid grid-cols-2 gap-1.5 p-1 bg-stone-100 rounded-xl text-xs font-medium">
+                    <div class="grid grid-cols-2 gap-1.5 p-1 bg-stone-200/60 rounded-xl text-xs font-medium">
                         <button 
                             type="button" 
                             @click="contactType = 'instagram'"
-                            :class="contactType === 'instagram' ? 'bg-white text-stone-900 shadow-xs' : 'text-stone-500 hover:text-stone-800'"
-                            class="py-2 rounded-lg transition-all text-center">
+                            :class="contactType === 'instagram' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
+                            class="py-2.5 rounded-lg transition-all text-center">
                             Instagram
                         </button>
                         <button 
                             type="button" 
                             @click="contactType = 'whatsapp'"
-                            :class="contactType === 'whatsapp' ? 'bg-white text-stone-900 shadow-xs' : 'text-stone-500 hover:text-stone-800'"
-                            class="py-2 rounded-lg transition-all text-center">
+                            :class="contactType === 'whatsapp' ? 'bg-white text-stone-900 shadow-xs font-semibold' : 'text-stone-500 hover:text-stone-800'"
+                            class="py-2.5 rounded-lg transition-all text-center">
                             WhatsApp
                         </button>
                     </div>
@@ -280,7 +284,7 @@
                                 type="text" 
                                 required
                                 :placeholder="contactType === 'instagram' ? '@your_username' : '0812xxxx...'" 
-                                class="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:bg-white focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all">
+                                class="w-full px-4 py-3 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all shadow-xs">
                         </div>
 
                         <div>
@@ -291,7 +295,7 @@
                                 v-model="recipientNote" 
                                 type="text" 
                                 placeholder="Anything you'd like to add" 
-                                class="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:bg-white focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all">
+                                class="w-full px-4 py-3 rounded-xl bg-white border border-stone-200 text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 focus:border-stone-400 focus:ring-2 focus:ring-stone-200 focus:outline-none transition-all shadow-xs">
                         </div>
 
                         <div class="pt-2">
