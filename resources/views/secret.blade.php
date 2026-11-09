@@ -6,10 +6,10 @@
     <title>A Note For You</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Cormorant Garamond (Elegance/Luxury) & Plus Jakarta Sans (Clean Modern) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,20 +19,38 @@
                 extend: {
                     fontFamily: {
                         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        serif: ['"Playfair Display"', 'serif'],
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                    },
+                    colors: {
+                        blush: {
+                            50: '#fff8f7',
+                            100: '#feedeb',
+                            200: '#fddbd7',
+                            300: '#f9bdb5',
+                            400: '#f29588',
+                            500: '#e56c5c',
+                            600: '#ce4a39',
+                        },
+                        cream: {
+                            50: '#fdfbf7',
+                            100: '#f9f5ed',
+                            200: '#f3ebe0',
+                            300: '#e8dbcb',
+                        },
+                        cashmere: '#efe6dd'
                     },
                     animation: {
-                        'pulse-glow': 'pulseGlow 2.5s infinite ease-in-out',
-                        'float': 'float 3s ease-in-out infinite',
+                        'float-soft': 'floatSoft 4s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 3.5s ease-in-out infinite',
                     },
                     keyframes: {
-                        pulseGlow: {
-                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
-                            '50%': { opacity: '0.8', transform: 'scale(1.05)' },
-                        },
-                        float: {
+                        floatSoft: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-5px)' },
+                            '50%': { transform: 'translateY(-6px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
+                            '50%': { opacity: '0.75', transform: 'scale(1.08)' },
                         }
                     }
                 }
@@ -46,85 +64,104 @@
     <style>
         [v-cloak] { display: none; }
         body {
-            background-color: #0b0f19;
-            color: #f1f5f9;
+            background-color: #faf7f4;
+            color: #2e2825;
             font-family: 'Plus Jakarta Sans', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
-        .glass-card {
-            background: rgba(17, 24, 39, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+        
+        /* Soft, warm paper luxury card */
+        .card-luxury {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(235, 222, 211, 0.8);
+            box-shadow: 
+                0 4px 6px -1px rgba(180, 140, 120, 0.05),
+                0 25px 45px -12px rgba(195, 155, 135, 0.22);
+        }
+
+        .inner-paper {
+            background: linear-gradient(180deg, #fffdfb 0%, #fbf8f4 100%);
+            border: 1px solid #f1eae2;
+        }
+
+        .btn-soft-primary {
+            background: linear-gradient(135deg, #e78879 0%, #d96f60 100%);
+            box-shadow: 0 10px 25px -5px rgba(220, 115, 100, 0.35);
+        }
+        .btn-soft-primary:hover {
+            background: linear-gradient(135deg, #ec9284 0%, #df796a 100%);
+            box-shadow: 0 12px 28px -5px rgba(220, 115, 100, 0.45);
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative overflow-x-hidden selection:bg-amber-500 selection:text-white">
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-10 relative overflow-x-hidden selection:bg-rose-200 selection:text-rose-900">
 
-    <!-- Ambient background glows -->
+    <!-- Ambient Warm Pastel Orbs (Soft, feminine, cozy atmosphere) -->
     <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div class="absolute -top-32 -left-32 w-80 h-80 bg-rose-600/15 rounded-full blur-3xl animate-pulse-glow"></div>
-        <div class="absolute -bottom-32 -right-32 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl animate-pulse-glow" style="animation-delay: 1.2s"></div>
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-rose-200/50 rounded-full blur-3xl animate-glow-pulse"></div>
+        <div class="absolute -bottom-28 -right-20 w-[420px] h-[420px] bg-amber-100/70 rounded-full blur-3xl animate-glow-pulse" style="animation-delay: 1.5s"></div>
+        <div class="absolute top-1/3 right-1/4 w-72 h-72 bg-peach-100/40 rounded-full blur-3xl"></div>
     </div>
 
-    <!-- App Container -->
-    <div id="app" v-cloak class="w-full max-w-sm mx-auto relative z-10">
+    <!-- Main Container: Fully responsive from mobile to tablet and laptop -->
+    <div id="app" v-cloak class="w-full max-w-[390px] sm:max-w-[420px] md:max-w-[450px] mx-auto relative z-10 transition-all duration-300">
 
         <!-- ============================================== -->
-        <!-- SCREEN: ALREADY CLOSED / EXPIRED               -->
+        <!-- SCREEN: NOTE CLOSED / EXPIRED                  -->
         <!-- ============================================== -->
-        <div v-if="isDestroyed" class="glass-card rounded-3xl p-8 text-center transition-all duration-500">
-            <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-2xl text-zinc-500">
-                ✉️
+        <div v-if="isDestroyed" class="card-luxury rounded-[32px] p-8 sm:p-9 text-center transition-all duration-500">
+            <div class="w-16 h-16 mx-auto mb-5 rounded-2xl bg-stone-100/80 border border-stone-200/60 flex items-center justify-center text-2xl text-stone-400">
+                💌
             </div>
 
-            <div class="inline-block px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-zinc-800 text-zinc-400 mb-3 border border-zinc-700/60">
+            <div class="inline-block px-3.5 py-1 rounded-full text-[11px] font-medium tracking-widest uppercase bg-stone-100 text-stone-500 mb-3 border border-stone-200/60">
                 Note Closed
             </div>
 
-            <h1 class="text-xl font-bold font-serif text-white mb-2">
+            <h1 class="text-2xl sm:text-3xl font-serif font-bold text-stone-800 mb-2.5">
                 This note is no longer available.
             </h1>
 
-            <p class="text-zinc-400 text-xs leading-relaxed">
+            <p class="text-stone-500 text-xs sm:text-sm leading-relaxed font-light">
                 This was a private one-time note meant just for you, and it has now closed for good.
             </p>
         </div>
 
 
         <!-- ============================================== -->
-        <!-- SCREEN 0: THE SEALED NOTE (FIRST GLANCE)       -->
+        <!-- SCREEN 0: THE SEALED NOTE                      -->
         <!-- ============================================== -->
-        <div v-else-if="currentStep === 0" class="glass-card rounded-3xl p-7 text-center transition-all duration-500">
-            <!-- Top tag -->
-            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-medium tracking-wider uppercase bg-amber-500/10 text-amber-300 border border-amber-500/20 mb-6">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
-                Just For You
+        <div v-else-if="currentStep === 0" class="card-luxury rounded-[32px] p-7 sm:p-9 text-center transition-all duration-500">
+            <!-- Top delicate pill -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-medium tracking-wider uppercase bg-rose-50 text-rose-700/90 border border-rose-200/70 mb-7">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping"></span>
+                Dedicated For You
             </div>
 
-            <!-- Envelope Icon -->
+            <!-- Envelope Wax Seal Icon -->
             <div class="mb-6 relative">
-                <div class="w-20 h-20 mx-auto rounded-3xl bg-gradient-to-tr from-amber-500/20 to-rose-500/20 border border-amber-500/30 flex items-center justify-center animate-float shadow-lg shadow-amber-500/10">
-                    <svg class="w-10 h-10 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-[28px] bg-gradient-to-tr from-rose-100 via-cream-100 to-amber-100 border border-rose-200/60 flex items-center justify-center animate-float-soft shadow-inner">
+                    <svg class="w-10 h-10 sm:w-11 sm:h-11 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.3" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                 </div>
             </div>
 
-            <!-- Title -->
-            <h1 class="text-2xl font-bold font-serif text-white tracking-tight mb-2.5">
+            <!-- Title & Subtitle -->
+            <h1 class="text-3xl sm:text-4xl font-serif font-semibold text-stone-800 tracking-tight mb-3">
                 A quiet hello.
             </h1>
 
-            <p class="text-zinc-300 text-xs leading-relaxed mb-6 font-light">
-                I wrote this little note specifically for you. It can only be opened once, so take your time reading it.
+            <p class="text-stone-600 text-xs sm:text-sm leading-relaxed mb-7 font-light px-2">
+                I wrote this little note specifically for you. It can only be opened once, so please take your time reading it.
             </p>
 
             <!-- Unlock Button -->
             <button 
                 @click="openNote" 
-                class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 font-bold text-xs tracking-wide shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                class="w-full py-4 px-6 rounded-2xl btn-soft-primary text-white font-medium text-xs sm:text-sm tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2">
                 <span>Open Note ✉️</span>
             </button>
         </div>
@@ -133,36 +170,37 @@
         <!-- ============================================== -->
         <!-- SCREEN 1: THE OBSERVATION                      -->
         <!-- ============================================== -->
-        <div v-else-if="currentStep === 1" class="glass-card rounded-3xl p-7 transition-all duration-500">
-            <!-- Progress indicator -->
-            <div class="flex items-center justify-between mb-5 text-[11px] text-zinc-500 font-medium">
-                <span>01 of 03</span>
+        <div v-else-if="currentStep === 1" class="card-luxury rounded-[32px] p-7 sm:p-9 transition-all duration-500">
+            <!-- Soft progress dots -->
+            <div class="flex items-center justify-between mb-6 text-xs text-stone-400 font-medium">
+                <span class="tracking-wider uppercase text-[10px] text-rose-600/80 font-semibold">Step 01 / 03</span>
                 <div class="flex gap-1.5">
-                    <span class="w-5 h-1.5 rounded-full bg-amber-400"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-700"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-700"></span>
+                    <span class="w-6 h-1.5 rounded-full bg-rose-400"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span>
                 </div>
             </div>
 
-            <h1 class="text-2xl font-bold font-serif text-white tracking-tight mb-4">
+            <h1 class="text-2xl sm:text-3xl font-serif font-semibold text-stone-800 tracking-tight mb-4">
                 I couldn't help but notice you.
             </h1>
 
-            <div class="space-y-3 text-zinc-300 text-xs leading-relaxed font-light mb-7 bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
+            <!-- Paper letter inset -->
+            <div class="inner-paper space-y-3.5 text-stone-600 text-xs sm:text-sm leading-relaxed font-light mb-7 p-5 rounded-2xl">
                 <p>
                     We’ve been in the same room, and honestly, you caught my attention from the moment I saw you.
                 </p>
                 <p>
                     I wanted to come over and say hi in person, but you looked busy and I didn't want to interrupt you in front of everyone.
                 </p>
-                <p class="text-amber-200/90 font-normal">
+                <p class="text-rose-700 font-normal italic">
                     So I decided to leave you this little note instead.
                 </p>
             </div>
 
             <button 
                 @click="nextStep(2)" 
-                class="w-full py-3.5 px-6 rounded-2xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold text-xs tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                class="w-full py-3.5 px-6 rounded-2xl bg-stone-900 hover:bg-stone-800 text-white font-medium text-xs sm:text-sm tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-sm">
                 <span>Next →</span>
             </button>
         </div>
@@ -171,37 +209,37 @@
         <!-- ============================================== -->
         <!-- SCREEN 2: GENTLE VIBE CHECK                    -->
         <!-- ============================================== -->
-        <div v-else-if="currentStep === 2" class="glass-card rounded-3xl p-7 transition-all duration-500">
-            <!-- Progress indicator -->
-            <div class="flex items-center justify-between mb-5 text-[11px] text-zinc-500 font-medium">
-                <span>02 of 03</span>
+        <div v-else-if="currentStep === 2" class="card-luxury rounded-[32px] p-7 sm:p-9 transition-all duration-500">
+            <!-- Soft progress dots -->
+            <div class="flex items-center justify-between mb-6 text-xs text-stone-400 font-medium">
+                <span class="tracking-wider uppercase text-[10px] text-rose-600/80 font-semibold">Step 02 / 03</span>
                 <div class="flex gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-700"></span>
-                    <span class="w-5 h-1.5 rounded-full bg-amber-400"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-700"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span>
+                    <span class="w-6 h-1.5 rounded-full bg-rose-400"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span>
                 </div>
             </div>
 
-            <h1 class="text-2xl font-bold font-serif text-white tracking-tight mb-2">
+            <h1 class="text-2xl sm:text-3xl font-serif font-semibold text-stone-800 tracking-tight mb-1.5">
                 Just one quick question...
             </h1>
-            <p class="text-zinc-400 text-xs mb-5 font-light">
+            <p class="text-stone-500 text-xs sm:text-sm mb-6 font-light">
                 Before anything else, I just wanted to ask:
             </p>
 
-            <!-- Choices -->
+            <!-- Soft choices -->
             <div class="space-y-3 mb-6">
                 <!-- Option Single -->
                 <button 
                     @click="chooseStatus('single')"
                     :disabled="isSubmitting"
-                    class="w-full p-4 rounded-2xl bg-zinc-900/80 hover:bg-zinc-800 border border-zinc-800 hover:border-amber-400/50 text-left transition-all group flex items-start gap-3.5">
-                    <span class="text-xl mt-0.5 group-hover:scale-110 transition-transform">✨</span>
+                    class="w-full p-4 sm:p-4.5 rounded-2xl bg-white hover:bg-rose-50/50 border border-stone-200/80 hover:border-rose-300 text-left transition-all group flex items-start gap-3.5 shadow-sm active:scale-[0.99]">
+                    <span class="text-2xl mt-0.5 group-hover:scale-110 transition-transform">✨</span>
                     <div>
-                        <div class="font-bold text-xs text-white group-hover:text-amber-300 transition-colors">
+                        <div class="font-semibold text-xs sm:text-sm text-stone-800 group-hover:text-rose-700 transition-colors">
                             I'm single and happy to chat
                         </div>
-                        <div class="text-[11px] text-zinc-400 font-light mt-0.5">
+                        <div class="text-[11px] sm:text-xs text-stone-400 font-light mt-0.5">
                             Nice to meet you!
                         </div>
                     </div>
@@ -211,20 +249,20 @@
                 <button 
                     @click="chooseStatus('taken')"
                     :disabled="isSubmitting"
-                    class="w-full p-4 rounded-2xl bg-zinc-900/40 hover:bg-zinc-850 border border-zinc-800/80 text-left transition-all group flex items-start gap-3.5">
-                    <span class="text-xl mt-0.5 group-hover:scale-110 transition-transform">🌿</span>
+                    class="w-full p-4 sm:p-4.5 rounded-2xl bg-stone-50/60 hover:bg-stone-100/70 border border-stone-200/60 text-left transition-all group flex items-start gap-3.5 active:scale-[0.99]">
+                    <span class="text-2xl mt-0.5 group-hover:scale-110 transition-transform">🌿</span>
                     <div>
-                        <div class="font-bold text-xs text-zinc-300">
+                        <div class="font-semibold text-xs sm:text-sm text-stone-600">
                             I'm already seeing someone
                         </div>
-                        <div class="text-[11px] text-zinc-500 font-light mt-0.5">
+                        <div class="text-[11px] sm:text-xs text-stone-400 font-light mt-0.5">
                             Appreciate the note though!
                         </div>
                     </div>
                 </button>
             </div>
 
-            <p class="text-[11px] text-zinc-500 text-center font-light">
+            <p class="text-[11px] text-stone-400 text-center font-light">
                 Zero pressure—whichever is true for you!
             </p>
         </div>
@@ -233,68 +271,68 @@
         <!-- ============================================== -->
         <!-- SCREEN 2B: GRACEFUL EXIT (IF TAKEN)            -->
         <!-- ============================================== -->
-        <div v-else-if="currentStep === 'exit_taken'" class="glass-card rounded-3xl p-7 text-center transition-all duration-500">
-            <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-2xl">
+        <div v-else-if="currentStep === 'exit_taken'" class="card-luxury rounded-[32px] p-7 sm:p-9 text-center transition-all duration-500">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 border border-rose-200/60 flex items-center justify-center text-3xl">
                 🌸
             </div>
 
-            <h1 class="text-2xl font-bold font-serif text-white mb-2">
+            <h1 class="text-2xl sm:text-3xl font-serif font-semibold text-stone-800 mb-2.5">
                 Totally understood!
             </h1>
 
-            <p class="text-zinc-300 text-xs leading-relaxed mb-6 font-light">
+            <p class="text-stone-600 text-xs sm:text-sm leading-relaxed mb-6 font-light px-2">
                 Whoever has your heart is really lucky! No worries at all—I just wanted to share a genuine compliment. Hope you have a wonderful day ahead!
             </p>
 
-            <div class="text-xs text-amber-400/90 font-mono">
-                Closing note in @{{ countdown }}s...
+            <div class="inline-block px-3 py-1 rounded-full text-xs text-stone-400 bg-stone-100 border border-stone-200/60 font-mono">
+                Closing in @{{ countdown }}s...
             </div>
         </div>
 
 
         <!-- ============================================== -->
-        <!-- SCREEN 3: THE CONTACT (IF SINGLE)              -->
+        <!-- SCREEN 3: THE CONTACT FORM (IF SINGLE)         -->
         <!-- ============================================== -->
-        <div v-else-if="currentStep === 3" class="glass-card rounded-3xl p-7 transition-all duration-500">
-            <!-- Progress indicator -->
-            <div class="flex items-center justify-between mb-5 text-[11px] text-zinc-500 font-medium">
-                <span>03 of 03</span>
+        <div v-else-if="currentStep === 3" class="card-luxury rounded-[32px] p-7 sm:p-9 transition-all duration-500">
+            <!-- Soft progress dots -->
+            <div class="flex items-center justify-between mb-6 text-xs text-stone-400 font-medium">
+                <span class="tracking-wider uppercase text-[10px] text-rose-600/80 font-semibold">Step 03 / 03</span>
                 <div class="flex gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-700"></span>
-                    <span class="w-1.5 h-1.5 rounded-full bg-zinc-700"></span>
-                    <span class="w-5 h-1.5 rounded-full bg-amber-400"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-stone-200"></span>
+                    <span class="w-6 h-1.5 rounded-full bg-rose-400"></span>
                 </div>
             </div>
 
-            <h1 class="text-2xl font-bold font-serif text-white tracking-tight mb-1.5">
+            <h1 class="text-2xl sm:text-3xl font-serif font-semibold text-stone-800 tracking-tight mb-1.5">
                 I’d love to get to know you.
             </h1>
-            <p class="text-zinc-300 text-xs mb-5 font-light leading-relaxed">
+            <p class="text-stone-500 text-xs sm:text-sm mb-6 font-light leading-relaxed">
                 Maybe we could grab a coffee or chat sometime. If you’re open to it, where can I say hi?
             </p>
 
             <form @submit.prevent="submitContact" class="space-y-4">
-                <!-- Channel selector -->
-                <div class="grid grid-cols-2 gap-2 p-1 bg-zinc-900 rounded-xl border border-zinc-800 text-xs font-semibold">
+                <!-- Channel selector toggle -->
+                <div class="grid grid-cols-2 gap-2 p-1 bg-stone-100/90 rounded-2xl border border-stone-200/60 text-xs font-medium">
                     <button 
                         type="button" 
                         @click="contactType = 'instagram'"
-                        :class="contactType === 'instagram' ? 'bg-zinc-800 text-white shadow' : 'text-zinc-400'"
-                        class="py-2 rounded-lg transition-all flex items-center justify-center gap-1.5">
+                        :class="contactType === 'instagram' ? 'bg-white text-stone-800 shadow-sm font-semibold' : 'text-stone-500 hover:text-stone-700'"
+                        class="py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5">
                         <span>📸 Instagram</span>
                     </button>
                     <button 
                         type="button" 
                         @click="contactType = 'whatsapp'"
-                        :class="contactType === 'whatsapp' ? 'bg-zinc-800 text-white shadow' : 'text-zinc-400'"
-                        class="py-2 rounded-lg transition-all flex items-center justify-center gap-1.5">
+                        :class="contactType === 'whatsapp' ? 'bg-white text-stone-800 shadow-sm font-semibold' : 'text-stone-500 hover:text-stone-700'"
+                        class="py-2.5 rounded-xl transition-all flex items-center justify-center gap-1.5">
                         <span>💬 WhatsApp</span>
                     </button>
                 </div>
 
-                <!-- Input -->
+                <!-- Contact Input Field -->
                 <div>
-                    <label class="block text-[11px] font-medium text-zinc-400 mb-1">
+                    <label class="block text-[11px] sm:text-xs font-medium text-stone-600 mb-1.5">
                         @{{ contactType === 'instagram' ? 'Your Instagram Username' : 'Your WhatsApp Number' }}
                     </label>
                     <input 
@@ -302,26 +340,26 @@
                         type="text" 
                         required
                         :placeholder="contactType === 'instagram' ? '@your_username' : '0812xxxx...'" 
-                        class="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-amber-400 focus:outline-none text-white text-xs placeholder:text-zinc-600 transition-all">
+                        class="w-full px-4 py-3 rounded-2xl bg-white border border-stone-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 focus:outline-none text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 transition-all shadow-sm">
                 </div>
 
                 <!-- Note (Optional) -->
                 <div>
-                    <label class="block text-[11px] font-medium text-zinc-400 mb-1">
-                        Leave a message <span class="text-zinc-600">(optional)</span>
+                    <label class="block text-[11px] sm:text-xs font-medium text-stone-600 mb-1.5">
+                        Leave a message <span class="text-stone-400 font-normal">(optional)</span>
                     </label>
                     <input 
                         v-model="recipientNote" 
                         type="text" 
                         placeholder="e.g. Try guessing who I am 😉" 
-                        class="w-full px-4 py-2.5 rounded-xl bg-zinc-950 border border-zinc-800 focus:border-amber-400 focus:outline-none text-white text-xs placeholder:text-zinc-600 transition-all">
+                        class="w-full px-4 py-3 rounded-2xl bg-white border border-stone-200 focus:border-rose-400 focus:ring-4 focus:ring-rose-100 focus:outline-none text-stone-800 text-xs sm:text-sm placeholder:text-stone-400 transition-all shadow-sm">
                 </div>
 
                 <!-- Submit Button -->
                 <button 
                     type="submit" 
                     :disabled="isSubmitting || !contactValue.trim()"
-                    class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-zinc-950 font-bold text-xs tracking-wide shadow-lg shadow-orange-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                    class="w-full py-4 px-6 rounded-2xl btn-soft-primary disabled:opacity-50 text-white font-semibold text-xs sm:text-sm tracking-wide active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2">
                     <span v-if="!isSubmitting">Send Message ✨</span>
                     <span v-else>Sending...</span>
                 </button>
@@ -332,20 +370,20 @@
         <!-- ============================================== -->
         <!-- SCREEN 4: SUCCESS & CLOSING                    -->
         <!-- ============================================== -->
-        <div v-else-if="currentStep === 'burning'" class="glass-card rounded-3xl p-8 text-center transition-all duration-700">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl animate-pulse">
+        <div v-else-if="currentStep === 'burning'" class="card-luxury rounded-[32px] p-8 sm:p-9 text-center transition-all duration-700">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-rose-50 border border-rose-200/80 flex items-center justify-center text-3xl animate-bounce">
                 ✨
             </div>
 
-            <h1 class="text-2xl font-bold font-serif text-white mb-2">
+            <h1 class="text-2xl sm:text-3xl font-serif font-semibold text-stone-800 mb-2">
                 Thank you!
             </h1>
 
-            <p class="text-zinc-300 text-xs leading-relaxed mb-6 font-light">
+            <p class="text-stone-600 text-xs sm:text-sm leading-relaxed mb-6 font-light px-2">
                 I received it. I’ll say hi soon! This note will close now so it stays just between us.
             </p>
 
-            <div class="font-mono text-xs text-amber-400">
+            <div class="inline-block px-3 py-1 rounded-full text-xs text-rose-500 bg-rose-50/70 border border-rose-200/60 font-mono">
                 Closing in @{{ countdown }}...
             </div>
         </div>
@@ -459,11 +497,13 @@
                             })
                         });
 
+                        // Pastel, soft celebratory confetti
                         if (window.confetti) {
                             window.confetti({
-                                particleCount: 70,
+                                particleCount: 65,
                                 spread: 60,
-                                origin: { y: 0.6 }
+                                origin: { y: 0.6 },
+                                colors: ['#f29588', '#fddbd7', '#f4a261', '#ffd166', '#ffffff']
                             });
                         }
 
