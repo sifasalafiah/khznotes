@@ -218,11 +218,11 @@
                             </p>
 
                             <p>
-                                I know this is a bit out of nowhere, but I've noticed you around the room and just wanted to introduce myself.
+                                I know this is kinda out of nowhere, but I noticed you earlier and just wanted to say hi.
                             </p>
 
                             <p>
-                                You always look focused, and I didn't want to awkwardly interrupt you while you were busy, so I thought leaving this was simpler.
+                                You looked pretty focused though, and I didn't want to awkwardly interrupt you while you were busy, so I thought leaving this was simpler.
                             </p>
 
                             <!-- Continue Button directly beneath the text -->
@@ -252,11 +252,11 @@
                         <!-- Body Text & Action directly underneath -->
                         <div class="space-y-4 text-[14px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light my-auto">
                             <p>
-                                If you're open to getting coffee or just chatting sometime, I'd love to say hi properly.
+                                If you're down to grab a coffee or just chat sometime, I'd love to say hi properly.
                             </p>
 
-                            <p class="text-xs text-stone-600 pt-1">
-                                Before that though, just to make sure I'm not overstepping:
+                            <p class="text-xs text-stone-600 pt-0.5">
+                                Before that though:
                             </p>
 
                             <!-- Question & Choices Flowing Seamlessly -->
@@ -264,9 +264,15 @@
                                 <transition name="step-fade" mode="out-in">
                                     <!-- Initial Choices State -->
                                     <div v-if="!showTakenConfirm" key="vibe-question" class="space-y-3">
-                                        <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 text-center sm:text-left">
-                                            Are you seeing anyone?
-                                        </p>
+                                        <div class="space-y-1 text-center sm:text-left">
+                                            <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 leading-snug">
+                                                Are you single?
+                                            </p>
+                                            <p class="text-xs text-stone-500 font-light italic">
+                                                (or is someone already on your mind?)
+                                            </p>
+                                        </div>
+
                                         <div class="grid grid-cols-2 gap-3 pt-1">
                                             <button 
                                                 @click="selectChoice('single')"
@@ -276,25 +282,25 @@
                                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                                                 </svg>
-                                                <span>@{{ isSubmitting && activeChoice === 'single' ? 'One moment...' : 'Single :)' }}</span>
+                                                <span>@{{ isSubmitting && activeChoice === 'single' ? 'One moment...' : 'Yep, single :)' }}</span>
                                             </button>
                                             <button 
                                                 @click="promptTakenConfirm"
                                                 :disabled="isSubmitting || isNavigating"
                                                 class="btn-choice py-3.5 px-3 rounded-xl text-xs sm:text-sm font-medium active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-60 transition-all">
-                                                <span>Seeing someone</span>
+                                                <span>Taken / seeing someone</span>
                                             </button>
                                         </div>
 
-                                        <p class="text-[11px] text-stone-600 italic text-center sm:text-left pt-1">
-                                            (No worries either way, whichever is true for you!)
+                                        <p class="text-[11px] text-stone-500 italic text-center sm:text-left pt-1">
+                                            (No pressure at all, whichever is true!)
                                         </p>
                                     </div>
 
                                     <!-- Soft Confirmation State -->
                                     <div v-else key="taken-confirm" class="space-y-3">
                                         <p class="font-serif text-xl sm:text-2xl font-semibold text-stone-900 text-center sm:text-left">
-                                            Just to be sure before this note closes:
+                                            Just checking before this note closes:
                                         </p>
                                         <p class="text-xs text-stone-600 text-center sm:text-left leading-relaxed">
                                             I'll close the note quietly so I don't bother you.
@@ -316,7 +322,7 @@
                                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                                                 </svg>
-                                                <span>@{{ isSubmitting && activeChoice === 'taken' ? 'Closing...' : "Yes, that's right" }}</span>
+                                                <span>@{{ isSubmitting && activeChoice === 'taken' ? 'Closing...' : "Yep, that's right" }}</span>
                                             </button>
                                         </div>
                                     </div>
