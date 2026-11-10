@@ -131,4 +131,77 @@ class SecretNoteTest extends TestCase
             'custom_url' => 'https://bit.ly/notes-for-you',
         ]);
     }
+
+    public function test_reset_requires_valid_passcode(): void
+    {
+        $response = $this->withSession(['studio_auth' => true])
+            ->postJson('/api/studio/reset', [
+                'passcode' => 'wrongpasscode',
+                'mode'     => 'all_delete',
+            ]);
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'success' => false,
+                'message' => 'Incorrect passcode. Verification failed.',
+            ]);
+    }
+
+    public function test_reset_specific_note(): void
+    {
+        $note = SecretNote::create([
+            'token'                => 'test-reset-note',
+            'recipient_name'       => 'Sarah',
+            'status'               => 'submitted',
+            'current_step'         => 3,
+            'relationship_choice'  => 'single',
+            'contact_type'         => 'instagram',
+            'contact_value'        => '@sarah',
+            'is_destroyed'         => true,
+            'destroyed_at'         => now(),
+        ]);
+
+        $response = $this->withSession(['studio_auth' => true])
+            ->postJson('/api/studio/reset', [
+                'passcode' => 'khz2026',
+                'mode'     => 'note',
+                'token'    => 'test-reset-note',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+            ]);
+
+        $note->refresh();
+        $this->assertEquals('created', $note->status);
+        $this->assertEquals(0, $note->current_step);
+        $this->assertFalse((bool)$note->is_destroyed);
+        $this->assertNull($note->contact_value);
+    }
+
+    public function test_reset_all_delete(): void
+    {
+        SecretNote::create([
+            'token' => 'note-1',
+            'status' => 'created',
+        ]);
+        SecretNote::create([
+            'token' => 'note-2',
+            'status' => 'created',
+        ]);
+
+        $response = $this->withSession(['studio_auth' => true])
+            ->postJson('/api/studio/reset', [
+                'passcode' => 'khz2026',
+                'mode'     => 'all_delete',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+            ]);
+
+        $this->assertDatabaseCount('secret_notes', 0);
+    }
 }

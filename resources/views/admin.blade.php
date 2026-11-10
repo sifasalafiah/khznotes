@@ -119,6 +119,16 @@
                     <span>Refresh</span>
                 </button>
 
+                <button 
+                    @click="openResetModal('note')" 
+                    class="px-3 py-2 rounded-xl bg-white hover:bg-rose-50 text-xs text-rose-600 font-medium transition-colors flex items-center gap-1.5 border border-rose-200/80 shadow-sm"
+                    title="Reset notes for testing (requires passcode)">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
+                    </svg>
+                    <span>Reset Data</span>
+                </button>
+
                 <form action="{{ route('studio.logout') }}" method="POST" class="inline">
                     @csrf
                     <button 
@@ -133,6 +143,15 @@
                 </form>
             </div>
         </header>
+
+        <!-- Success Notice Banner -->
+        <div v-if="resetSuccessMessage" class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium flex items-center justify-between shadow-xs">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>@{{ resetSuccessMessage }}</span>
+            </div>
+            <button @click="resetSuccessMessage = ''" class="text-emerald-600 hover:text-emerald-800 font-mono text-xs">Dismiss</button>
+        </div>
 
         <!-- Main Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-7">
@@ -540,6 +559,13 @@
                                     class="text-xs text-stone-600 hover:text-stone-900">
                                     Open
                                 </a>
+                                <span class="text-stone-300">|</span>
+                                <button 
+                                    @click="openResetModal('note', note)" 
+                                    title="Reset this note to unopened state for testing"
+                                    class="text-xs text-amber-600 hover:text-amber-800 font-medium">
+                                    Reset
+                                </button>
                                 <span v-if="!note.is_destroyed" class="text-stone-300">|</span>
                                 <button 
                                     v-if="!note.is_destroyed" 

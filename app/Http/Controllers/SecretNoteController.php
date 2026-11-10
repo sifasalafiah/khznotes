@@ -295,5 +295,87 @@ class SecretNoteController extends Controller
         $notes = SecretNote::latest()->get();
         return response()->json($notes);
     }
+
+    /**
+     * Reset note state or wipe test data for testing (protected by studio passcode)
+     */
+    public function reset(Request $request)
+    {
+        if (!$request->session()->get('studio_auth')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized. Please login to studio.'], 401);
+        }
+
+        $passcode = $request->input('passcode');
+        $validPasscode = env('STUDIO_PASSCODE', 'khz2026');
+
+        if (empty($passcode) || $passcode !== $validPasscode) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Incorrect passcode. Verification failed.'
+            ], 422);
+        }
+
+        $mode = $request->input('mode', 'note');
+        $token = $request->input('token');
+
+        if ($mode === 'note') {
+            if (!$token) {
+                return response()->json(['success' => false, 'message' => 'Note token is required for note reset.'], 422);
+            }
+
+            $note = SecretNote::where('token', $token)->first();
+            if (!$note) {
+                return response()->json(['success' => false, 'message' => 'Note not found.'], 404);
+            }
+
+            $note->update([
+                'status'              => 'created',
+                'current_step'        => 0,
+                'relationship_choice' => null,
+                'contact_type'        => null,
+                'contact_value'       => null,
+                'note_from_recipient' => null,
+                'opened_at'           => null,
+                'is_destroyed'        => false,
+                'destroyed_at'        => null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Note #{$token} has been reset to unopened state for testing.",
+                'note'    => $note->fresh(),
+            ]);
+        }
+
+        if ($mode === 'all_status') {
+            SecretNote::query()->update([
+                'status'              => 'created',
+                'current_step'        => 0,
+                'relationship_choice' => null,
+                'contact_type'        => null,
+                'contact_value'       => null,
+                'note_from_recipient' => null,
+                'opened_at'           => null,
+                'is_destroyed'        => false,
+                'destroyed_at'        => null,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'All notes have been reset to unopened state for testing.',
+            ]);
+        }
+
+        if ($mode === 'all_delete') {
+            SecretNote::query()->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'All notes have been deleted from the database.',
+            ]);
+        }
+
+        return response()->json(['success' => false, 'message' => 'Invalid reset mode selected.'], 422);
+    }
 }
 

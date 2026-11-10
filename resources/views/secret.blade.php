@@ -483,13 +483,20 @@
                 const isDestroyed = ref(noteData.value.isDestroyed || false);
 
                 // Compute exact step SYNCHRONOUSLY before initial render to prevent step-1 flashing
-                let initialStep = noteData.value.currentStep || 1;
-                try {
-                    const localStep = localStorage.getItem('secret_step_' + noteData.value.token);
-                    if (localStep && parseInt(localStep) > initialStep) {
-                        initialStep = parseInt(localStep);
-                    }
-                } catch (e) {}
+                let initialStep = 1;
+                if (noteData.value.currentStep && noteData.value.currentStep > 0) {
+                    initialStep = noteData.value.currentStep;
+                    try {
+                        const localStep = localStorage.getItem('secret_step_' + noteData.value.token);
+                        if (localStep && parseInt(localStep) > initialStep) {
+                            initialStep = parseInt(localStep);
+                        }
+                    } catch (e) {}
+                } else {
+                    try {
+                        localStorage.removeItem('secret_step_' + noteData.value.token);
+                    } catch (e) {}
+                }
 
                 const currentStep = ref(initialStep);
                 const contactType = ref('instagram');
