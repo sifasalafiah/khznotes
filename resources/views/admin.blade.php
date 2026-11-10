@@ -80,7 +80,7 @@
                 border-radius: 0 !important;
                 background: #faf8f5 !important;
                 color: #2e2825 !important;
-                padding: 4.5mm !important;
+                padding: 6.5mm 7.5mm !important;
                 box-shadow: none !important;
                 page-break-inside: avoid !important;
                 -webkit-print-color-adjust: exact !important;
@@ -350,13 +350,13 @@
                                 <span>FRONT</span>
                                 <span>8.6 × 5.6 cm</span>
                             </div>
-                            <div id="card-front" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-none bg-[#faf8f5] border border-stone-300/80 p-6 sm:p-7 flex flex-col justify-between overflow-hidden shadow-xs select-none">
+                            <div id="card-front" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-none bg-[#faf8f5] border border-stone-300/80 p-7 sm:p-8 flex flex-col justify-between overflow-hidden shadow-xs select-none">
                                 <!-- Center Message -->
-                                <div class="my-auto py-2">
-                                    <h3 class="font-serif text-2xl sm:text-[28px] font-medium text-stone-900 tracking-tight leading-snug mb-2">
+                                <div class="my-auto py-1">
+                                    <h3 class="font-serif text-2xl sm:text-[27px] font-medium text-stone-900 tracking-tight leading-snug mb-1.5">
                                         A note for you.
                                     </h3>
-                                    <p class="text-xs sm:text-[13.5px] text-stone-600 font-light leading-relaxed">
+                                    <p class="text-xs sm:text-[13px] text-stone-600 font-light leading-relaxed">
                                         Whenever you have a quiet minute to yourself.
                                     </p>
                                 </div>
@@ -374,7 +374,7 @@
                                 <span>BACK</span>
                                 <span>8.6 × 5.6 cm</span>
                             </div>
-                            <div id="card-back" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-none bg-[#faf8f5] border border-stone-300/80 p-4 sm:p-5 flex items-center justify-between gap-4 overflow-hidden shadow-xs select-none">
+                            <div id="card-back" class="print-card-exact relative w-full aspect-[86/56] max-w-[380px] mx-auto rounded-none bg-[#faf8f5] border border-stone-300/80 p-7 sm:p-8 flex items-center justify-between gap-3 sm:gap-4 overflow-hidden shadow-xs select-none">
                                 <!-- Left: Text Instruction & Link (Clean typography, no box, domain-only without http/https) -->
                                 <div class="flex-1 min-w-0 flex flex-col justify-center space-y-1.5 pr-2">
                                     <p class="text-xs sm:text-[13px] text-stone-800 font-normal leading-snug">
@@ -386,9 +386,9 @@
                                 </div>
 
                                 <!-- Right: Direct Print QR Code (No box, seamless on ivory stationery) -->
-                                <div class="shrink-0 w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center overflow-hidden">
+                                <div class="shrink-0 w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center overflow-hidden">
                                     <img v-if="qrDataUrl" :src="qrDataUrl" alt="QR Code" class="w-full h-full object-contain block">
-                                    <canvas v-show="!qrDataUrl" id="qr-canvas" class="w-24 h-24 sm:w-28 sm:h-28 block"></canvas>
+                                    <canvas v-show="!qrDataUrl" id="qr-canvas" class="w-20 h-20 sm:w-24 sm:h-24 block"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -644,7 +644,7 @@
                             const canvas = document.getElementById('qr-canvas');
                             if (canvas) {
                                 window.QRCode.toCanvas(canvas, text, {
-                                    width: 112,
+                                    width: 96,
                                     margin: 1,
                                     color: {
                                         dark: '#1c1917',
