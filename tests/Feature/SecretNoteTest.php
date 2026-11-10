@@ -77,4 +77,58 @@ class SecretNoteTest extends TestCase
 
         $response->assertStatus(422);
     }
+
+    public function test_can_create_note_with_custom_url(): void
+    {
+        $response = $this->withSession(['studio_auth' => true])
+            ->postJson('/api/notes', [
+                'custom_slug' => 'for-khz',
+                'custom_url'  => 'https://bit.ly/notes-for-you',
+                'recipient_name' => 'Sarah',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'note' => [
+                    'token' => 'for-khz',
+                    'custom_url' => 'https://bit.ly/notes-for-you',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('secret_notes', [
+            'token' => 'for-khz',
+            'custom_url' => 'https://bit.ly/notes-for-you',
+        ]);
+    }
+
+    public function test_can_update_custom_url_via_api(): void
+    {
+        $note = SecretNote::create([
+            'token' => 'for-khz-2',
+            'recipient_name' => 'Sarah',
+            'creator_name' => 'Me',
+            'creator_hint' => 'Room',
+            'room_context' => 'Same Room',
+            'status' => 'created',
+        ]);
+
+        $response = $this->withSession(['studio_auth' => true])
+            ->postJson("/api/notes/{$note->token}/custom-url", [
+                'custom_url' => 'https://bit.ly/notes-for-you',
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'success' => true,
+                'note' => [
+                    'custom_url' => 'https://bit.ly/notes-for-you',
+                ],
+            ]);
+
+        $this->assertDatabaseHas('secret_notes', [
+            'token' => 'for-khz-2',
+            'custom_url' => 'https://bit.ly/notes-for-you',
+        ]);
+    }
 }

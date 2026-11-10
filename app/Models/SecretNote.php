@@ -11,6 +11,7 @@ class SecretNote extends Model
 
     protected $fillable = [
         'token',
+        'custom_url',
         'recipient_name',
         'creator_name',
         'creator_hint',

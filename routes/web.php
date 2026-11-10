@@ -16,6 +16,7 @@ Route::post('/studio/logout', [SecretNoteController::class, 'logout'])->name('st
 // Studio APIs (Protected by session)
 Route::post('/api/notes', [SecretNoteController::class, 'store'])->name('admin.notes.store');
 Route::get('/api/notes/live', [SecretNoteController::class, 'liveNotes'])->name('admin.notes.live');
+Route::post('/api/notes/{token}/custom-url', [SecretNoteController::class, 'updateCustomUrl'])->name('admin.notes.customUrl');
 
 // Confidential Note View (The QR Code target - /notes)
 Route::get('/notes/{token}', [SecretNoteController::class, 'show'])->name('notes.show');

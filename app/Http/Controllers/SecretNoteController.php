@@ -57,6 +57,7 @@ class SecretNoteController extends Controller
         }
         $validated = $request->validate([
             'custom_slug'    => 'nullable|string|max:64|regex:/^[a-zA-Z0-9_\-]+$/|unique:secret_notes,token',
+            'custom_url'     => 'nullable|string|max:255',
             'recipient_name' => 'nullable|string|max:100',
             'creator_name'   => 'nullable|string|max:100',
             'creator_hint'   => 'nullable|string|max:255',
@@ -79,6 +80,7 @@ class SecretNoteController extends Controller
 
         $note = SecretNote::create([
             'token'          => $token,
+            'custom_url'     => !empty($validated['custom_url']) ? trim($validated['custom_url']) : null,
             'recipient_name' => ($validated['recipient_name'] ?? null) ?: 'Someone Special',
             'creator_name'   => ($validated['creator_name'] ?? null) ?: 'Someone nearby',
             'creator_hint'   => ($validated['creator_hint'] ?? null) ?: 'Someone in the same room.',
@@ -91,6 +93,30 @@ class SecretNoteController extends Controller
             'success' => true,
             'note'    => $note,
             'url'     => route('notes.show', ['token' => $note->token]),
+        ]);
+    }
+
+    /**
+     * Update custom link/shortlink for card and QR
+     */
+    public function updateCustomUrl(Request $request, $token)
+    {
+        if (!$request->session()->get('studio_auth')) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized.'], 401);
+        }
+
+        $note = SecretNote::where('token', $token)->firstOrFail();
+        $validated = $request->validate([
+            'custom_url' => 'nullable|string|max:255',
+        ]);
+
+        $customUrl = !empty($validated['custom_url']) ? trim($validated['custom_url']) : null;
+        $note->custom_url = $customUrl;
+        $note->save();
+
+        return response()->json([
+            'success' => true,
+            'note'    => $note,
         ]);
     }
 

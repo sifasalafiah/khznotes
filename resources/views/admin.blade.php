@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secret Note Studio & Live Monitor</title>
+    <title>Private Note Studio</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
@@ -193,6 +193,16 @@
                             <p v-if="slugError" class="text-[10px] text-rose-500 mt-1 font-medium">@{{ slugError }}</p>
                         </div>
 
+                        <div>
+                            <label class="block text-[11px] font-semibold text-stone-600 mb-1">Custom Target Link / Shortlink (Optional)</label>
+                            <input 
+                                v-model="form.custom_url" 
+                                type="text" 
+                                placeholder="e.g. https://bit.ly/notes-for-you" 
+                                class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50/70 border border-stone-200 text-xs font-mono text-stone-800 focus:border-rose-400 focus:bg-white focus:outline-none transition-all">
+                            <p class="text-[10px] text-stone-400 mt-1">If provided, the QR and card back will point to this shortlink instead of the local server IP.</p>
+                        </div>
+
                         <button 
                             type="submit" 
                             :disabled="isCreating"
@@ -228,20 +238,47 @@
                         </button>
                     </div>
 
-                    <!-- Custom Domain / Wi-Fi IP setting for QR Code -->
-                    <div class="p-3.5 rounded-2xl bg-white border border-stone-200/90 text-xs space-y-1.5 shadow-xs">
-                        <div class="flex items-center justify-between">
-                            <label class="block text-[11px] font-semibold text-stone-600">
-                                Host URL encoded in QR Code:
-                            </label>
-                            <span class="text-[10px] text-stone-500 font-mono">Wi-Fi IP for phone scan</span>
+                    <!-- Custom Link & Host Target Setting for Selected Card -->
+                    <div class="p-4 rounded-2xl bg-white border border-stone-200/90 text-xs space-y-3 shadow-xs">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <label class="block text-[11px] font-semibold text-stone-700">
+                                    Custom Link / Shortlink for Card & QR:
+                                </label>
+                                <span v-if="isSavingCustomUrl" class="text-[10px] text-amber-600 font-mono flex items-center gap-1">
+                                    <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                                    Saving...
+                                </span>
+                                <span v-else-if="customUrlSaved" class="text-[10px] text-emerald-600 font-mono font-medium">
+                                    Saved
+                                </span>
+                            </div>
+                            <input 
+                                v-model="noteCustomUrl" 
+                                @input="onCustomUrlInput"
+                                type="text" 
+                                placeholder="e.g. https://bit.ly/notes-for-you"
+                                class="w-full px-3 py-2 rounded-xl bg-stone-50/70 border border-stone-200 text-xs font-mono text-stone-800 focus:outline-none focus:border-rose-400 focus:bg-white transition-all">
+                            <p class="text-[10px] text-stone-400 mt-1">
+                                Real-time updates QR and card back. Card displays clean domain without http/https.
+                            </p>
                         </div>
-                        <input 
-                            v-model="customBaseUrl" 
-                            @input="updateQrCode"
-                            type="text" 
-                            placeholder="e.g. http://10.200.99.149:8000 or public domain"
-                            class="w-full px-3 py-2 rounded-xl bg-stone-50/70 border border-stone-200 text-xs font-mono text-stone-800 focus:outline-none focus:border-rose-400">
+
+                        <!-- Fallback Wi-Fi / Host IP -->
+                        <div class="pt-2 border-t border-stone-100 flex flex-col gap-1">
+                            <div class="flex items-center justify-between">
+                                <label class="block text-[10px] font-medium text-stone-500">
+                                    Fallback Wi-Fi / Host IP (used when custom link is empty):
+                                </label>
+                                <span class="text-[9px] text-stone-400 font-mono">Default: @{{ windowLocationOrigin }}</span>
+                            </div>
+                            <input 
+                                v-model="customBaseUrl" 
+                                @input="updateQrCode"
+                                type="text" 
+                                placeholder="e.g. http://10.200.99.149:8000"
+                                class="w-full px-2.5 py-1.5 rounded-lg bg-stone-50/50 border border-stone-200 text-[11px] font-mono text-stone-600 focus:outline-none focus:border-rose-300">
+                        </div>
                     </div>
 
                     <!-- Side Switcher Tabs & Download Actions -->
@@ -344,7 +381,7 @@
                                         Scan the QR or visit:
                                     </p>
                                     <p class="text-[10px] sm:text-[11px] font-mono text-stone-600 break-all leading-normal select-all">
-                                        @{{ formatCardUrl(selectedNote.token) }}
+                                        @{{ formatCardUrl() }}
                                     </p>
                                 </div>
 
@@ -360,15 +397,18 @@
 
                     <!-- Direct Link Preview -->
                     <div class="p-3 rounded-2xl bg-white border border-stone-200 text-xs flex items-center justify-between gap-2 shadow-xs">
-                        <span class="font-mono text-[11px] text-stone-500 truncate">@{{ getNoteUrl(selectedNote.token) }}</span>
+                        <div class="min-w-0 flex-1">
+                            <span class="block text-[10px] text-stone-400 font-mono uppercase">Target QR Link</span>
+                            <span class="font-mono text-[11px] text-stone-700 truncate block select-all">@{{ getTargetQrUrl() }}</span>
+                        </div>
                         <div class="flex items-center gap-1.5 shrink-0">
                             <button 
-                                @click="copyLink(getNoteUrl(selectedNote.token))" 
+                                @click="copyLink(getTargetQrUrl())" 
                                 class="px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-stone-200 text-[11px] text-stone-700 font-medium transition-colors">
                                 Copy
                             </button>
                             <a 
-                                :href="getNoteUrl(selectedNote.token)" 
+                                :href="getTargetQrUrl()" 
                                 target="_blank" 
                                 class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-[11px] text-rose-600 font-semibold transition-colors">
                                 Open ↗
@@ -416,8 +456,11 @@
                                 <span class="font-mono text-xs font-bold text-stone-700 bg-stone-100 px-2 py-0.5 rounded-lg border border-stone-200/60">
                                     #@{{ note.token }}
                                 </span>
-                                <span class="text-xs text-stone-500 truncate max-w-[180px]">
+                                <span class="text-xs text-stone-500 truncate max-w-[150px]">
                                     @{{ note.recipient_name || 'Someone Special' }}
+                                </span>
+                                <span v-if="note.custom_url" class="text-[10px] font-mono px-2 py-0.5 rounded-md bg-stone-100 text-stone-600 border border-stone-200/60 truncate max-w-[140px]" :title="note.custom_url">
+                                    @{{ note.custom_url.replace(/^https?:\/\//i, '') }}
                                 </span>
                             </div>
 
@@ -492,7 +535,7 @@
                                 </button>
                                 <span class="text-stone-300">|</span>
                                 <a 
-                                    :href="getNoteUrl(note.token)" 
+                                    :href="note.custom_url || getNoteUrl(note.token)" 
                                     target="_blank" 
                                     class="text-xs text-stone-600 hover:text-stone-900">
                                     Open
@@ -532,18 +575,25 @@
                 const isRefreshing = ref(false);
                 const isCreating = ref(false);
                 const customBaseUrl = ref(window.location.origin);
+                const windowLocationOrigin = window.location.origin;
                 const cardSide = ref('both');
                 const qrDataUrl = ref('');
                 const isDownloadingFront = ref(false);
                 const isDownloadingBack = ref(false);
                 const isBurningId = ref(null);
 
+                const noteCustomUrl = ref('');
+                const isSavingCustomUrl = ref(false);
+                const customUrlSaved = ref(false);
+                let customUrlDebounceTimer = null;
+
                 const form = ref({
                     room_context: 'Same Room',
                     recipient_name: '',
                     creator_name: '',
                     creator_hint: '',
-                    custom_slug: ''
+                    custom_slug: '',
+                    custom_url: ''
                 });
                 const slugError = ref('');
 
@@ -557,10 +607,19 @@
                     return `${base}/notes/${token}`;
                 };
 
+                const getTargetQrUrl = () => {
+                    if (!selectedNote.value) return '';
+                    const custom = (noteCustomUrl.value || '').trim();
+                    if (custom) {
+                        return /^https?:\/\//i.test(custom) ? custom : `https://${custom}`;
+                    }
+                    return getNoteUrl(selectedNote.value.token);
+                };
+
                 const formatCardUrl = (token) => {
-                    if (!token) return '';
-                    const full = getNoteUrl(token);
-                    return full.replace(/^https?:\/\//i, '');
+                    const target = getTargetQrUrl();
+                    if (!target) return '';
+                    return target.replace(/^https?:\/\//i, '');
                 };
 
                 const renderQr = (text) => {
@@ -601,13 +660,52 @@
 
                 const updateQrCode = () => {
                     if (selectedNote.value) {
-                        renderQr(getNoteUrl(selectedNote.value.token));
+                        renderQr(getTargetQrUrl());
                     }
                 };
 
                 const selectNote = (note) => {
                     selectedNote.value = note;
-                    renderQr(getNoteUrl(note.token));
+                    noteCustomUrl.value = note.custom_url || '';
+                    updateQrCode();
+                };
+
+                const onCustomUrlInput = () => {
+                    updateQrCode();
+                    if (!selectedNote.value) return;
+
+                    selectedNote.value.custom_url = noteCustomUrl.value;
+
+                    clearTimeout(customUrlDebounceTimer);
+                    isSavingCustomUrl.value = true;
+                    customUrlSaved.value = false;
+
+                    customUrlDebounceTimer = setTimeout(async () => {
+                        try {
+                            const res = await fetch(`/api/notes/${selectedNote.value.token}/custom-url`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': getCsrfToken(),
+                                    'Accept': 'application/json'
+                                },
+                                body: JSON.stringify({ custom_url: noteCustomUrl.value })
+                            });
+                            if (res.ok) {
+                                const data = await res.json();
+                                if (data.note) {
+                                    const idx = notes.value.findIndex(n => n.id === data.note.id);
+                                    if (idx !== -1) notes.value[idx].custom_url = data.note.custom_url;
+                                }
+                                customUrlSaved.value = true;
+                                setTimeout(() => { customUrlSaved.value = false; }, 2500);
+                            }
+                        } catch (err) {
+                            console.error('Failed to save custom url:', err);
+                        } finally {
+                            isSavingCustomUrl.value = false;
+                        }
+                    }, 600);
                 };
 
                 const downloadCard = async (side) => {
@@ -664,7 +762,12 @@
                             notes.value = data;
                             if (selectedNote.value) {
                                 const found = data.find(n => n.id === selectedNote.value.id);
-                                if (found) selectedNote.value = found;
+                                if (found) {
+                                    selectedNote.value = found;
+                                    if (!isSavingCustomUrl.value && !customUrlSaved.value && !noteCustomUrl.value) {
+                                        noteCustomUrl.value = found.custom_url || '';
+                                    }
+                                }
                             }
                         }
                     } catch (e) {
@@ -696,6 +799,7 @@
                             form.value.creator_name = '';
                             form.value.creator_hint = '';
                             form.value.custom_slug = '';
+                            form.value.custom_url = '';
                         } else {
                             slugError.value = data.message || data.errors?.custom_slug?.[0] || 'Failed to create note.';
                         }
@@ -772,7 +876,8 @@
 
                 onMounted(() => {
                     if (selectedNote.value) {
-                        renderQr(getNoteUrl(selectedNote.value.token));
+                        noteCustomUrl.value = selectedNote.value.custom_url || '';
+                        updateQrCode();
                     }
                     setInterval(fetchNotes, 3000);
                 });
@@ -787,12 +892,18 @@
                     isBurningId,
                     form,
                     slugError,
+                    noteCustomUrl,
+                    isSavingCustomUrl,
+                    customUrlSaved,
                     customBaseUrl,
+                    windowLocationOrigin,
                     isRefreshing,
                     isCreating,
                     getNoteUrl,
+                    getTargetQrUrl,
                     formatCardUrl,
                     updateQrCode,
+                    onCustomUrlInput,
                     selectNote,
                     downloadCard,
                     fetchNotes,
