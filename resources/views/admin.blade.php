@@ -583,6 +583,136 @@
 
         </div>
 
+        <!-- Reset Test Data Modal (Passcode Protected) -->
+        <div 
+            v-if="isResetModalOpen" 
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40 backdrop-blur-xs"
+            @click.self="closeResetModal">
+            <div class="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-7 shadow-2xl border border-stone-200 space-y-5">
+                <!-- Modal Header -->
+                <div class="flex items-start justify-between gap-3 border-b border-stone-100 pb-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                            <span class="text-[10px] font-mono uppercase tracking-widest text-rose-600 font-bold">Passcode Protected</span>
+                        </div>
+                        <h3 class="text-base font-bold text-stone-800 font-serif">Reset Test Data</h3>
+                        <p class="text-xs text-stone-500 mt-0.5 font-light">
+                            Reset notes or wipe responses so you can test the note flow again.
+                        </p>
+                    </div>
+                    <button 
+                        @click="closeResetModal" 
+                        class="p-1.5 rounded-xl text-stone-400 hover:text-stone-600 hover:bg-stone-100 transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Mode Options -->
+                <div class="space-y-2">
+                    <label class="block text-[11px] font-semibold text-stone-600">Select Reset Action:</label>
+
+                    <!-- Option 1: Selected Note (if note is available) -->
+                    <label 
+                        v-if="resetTargetNote || selectedNote"
+                        :class="resetForm.mode === 'note' ? 'border-rose-400 bg-rose-50/50 ring-1 ring-rose-200' : 'border-stone-200 hover:border-stone-300 bg-white'"
+                        class="flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all">
+                        <input 
+                            type="radio" 
+                            name="resetMode" 
+                            value="note" 
+                            v-model="resetForm.mode" 
+                            class="mt-0.5 text-rose-600 focus:ring-rose-400">
+                        <div class="text-xs min-w-0">
+                            <div class="font-semibold text-stone-800">
+                                Reset Note #@{{ (resetTargetNote || selectedNote).token }}
+                            </div>
+                            <p class="text-[11px] text-stone-500 font-light mt-0.5">
+                                Un-destroys this note and clears responses. QR code and link remain active so you can scan and test again.
+                            </p>
+                        </div>
+                    </label>
+
+                    <!-- Option 2: All Notes (Reset Status to Created) -->
+                    <label 
+                        :class="resetForm.mode === 'all_status' ? 'border-rose-400 bg-rose-50/50 ring-1 ring-rose-200' : 'border-stone-200 hover:border-stone-300 bg-white'"
+                        class="flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all">
+                        <input 
+                            type="radio" 
+                            name="resetMode" 
+                            value="all_status" 
+                            v-model="resetForm.mode" 
+                            class="mt-0.5 text-rose-600 focus:ring-rose-400">
+                        <div class="text-xs min-w-0">
+                            <div class="font-semibold text-stone-800">
+                                Reset Status of All Notes
+                            </div>
+                            <p class="text-[11px] text-stone-500 font-light mt-0.5">
+                                Re-opens all notes and clears test responses. All existing cards can be scanned again.
+                            </p>
+                        </div>
+                    </label>
+
+                    <!-- Option 3: Delete All Notes (Wipe Database) -->
+                    <label 
+                        :class="resetForm.mode === 'all_delete' ? 'border-rose-400 bg-rose-50/50 ring-1 ring-rose-200' : 'border-stone-200 hover:border-stone-300 bg-white'"
+                        class="flex items-start gap-3 p-3 rounded-2xl border cursor-pointer transition-all">
+                        <input 
+                            type="radio" 
+                            name="resetMode" 
+                            value="all_delete" 
+                            v-model="resetForm.mode" 
+                            class="mt-0.5 text-rose-600 focus:ring-rose-400">
+                        <div class="text-xs min-w-0">
+                            <div class="font-semibold text-rose-700">
+                                Delete All Notes (Wipe Database)
+                            </div>
+                            <p class="text-[11px] text-stone-500 font-light mt-0.5">
+                                Permanently deletes all notes from MySQL. Starts the Studio with a clean slate.
+                            </p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Passcode Input -->
+                <div>
+                    <label class="block text-[11px] font-semibold text-stone-700 mb-1">
+                        Enter Studio Passcode:
+                    </label>
+                    <input 
+                        ref="resetPasscodeInput"
+                        v-model="resetForm.passcode" 
+                        type="password" 
+                        placeholder="Studio passcode (e.g. khz2026)" 
+                        @keyup.enter="submitReset"
+                        class="w-full px-3.5 py-2.5 rounded-xl bg-stone-50 border border-stone-200 text-xs text-stone-800 focus:outline-none focus:border-rose-400 focus:bg-white transition-all">
+                    <p v-if="resetError" class="text-[11px] text-rose-600 mt-1.5 font-medium">
+                        @{{ resetError }}
+                    </p>
+                </div>
+
+                <!-- Modal Actions -->
+                <div class="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
+                    <button 
+                        type="button" 
+                        @click="closeResetModal" 
+                        class="px-4 py-2 rounded-xl bg-stone-100 hover:bg-stone-200 text-xs text-stone-600 font-medium transition-colors">
+                        Cancel
+                    </button>
+                    <button 
+                        type="button" 
+                        @click="submitReset" 
+                        :disabled="isResetting || !resetForm.passcode"
+                        class="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 disabled:opacity-50 text-xs text-white font-medium transition-colors shadow-xs flex items-center gap-1.5">
+                        <svg v-if="isResetting" class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                        <span>@{{ isResetting ? 'Resetting...' : 'Confirm Reset' }}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Inject initial notes from Laravel Controller -->
@@ -612,6 +742,17 @@
                 const isSavingCustomUrl = ref(false);
                 const customUrlSaved = ref(false);
                 let customUrlDebounceTimer = null;
+
+                const isResetModalOpen = ref(false);
+                const isResetting = ref(false);
+                const resetError = ref('');
+                const resetSuccessMessage = ref('');
+                const resetTargetNote = ref(null);
+                const resetPasscodeInput = ref(null);
+                const resetForm = ref({
+                    mode: 'note',
+                    passcode: ''
+                });
 
                 const form = ref({
                     room_context: 'Same Room',
@@ -786,20 +927,89 @@
                         if (res.ok) {
                             const data = await res.json();
                             notes.value = data;
-                            if (selectedNote.value) {
+                            if (data.length === 0) {
+                                selectedNote.value = null;
+                                noteCustomUrl.value = '';
+                            } else if (selectedNote.value) {
                                 const found = data.find(n => n.id === selectedNote.value.id);
                                 if (found) {
                                     selectedNote.value = found;
                                     if (!isSavingCustomUrl.value && !customUrlSaved.value && !noteCustomUrl.value) {
                                         noteCustomUrl.value = found.custom_url || '';
                                     }
+                                } else {
+                                    selectNote(data[0]);
                                 }
+                            } else {
+                                selectNote(data[0]);
                             }
                         }
                     } catch (e) {
                         console.error('Failed to refresh notes:', e);
                     } finally {
                         isRefreshing.value = false;
+                    }
+                };
+
+                const openResetModal = (mode = 'note', note = null) => {
+                    resetTargetNote.value = note || selectedNote.value;
+                    resetForm.value.mode = (mode === 'note' && resetTargetNote.value) ? 'note' : mode;
+                    resetForm.value.passcode = '';
+                    resetError.value = '';
+                    isResetModalOpen.value = true;
+                    nextTick(() => {
+                        if (resetPasscodeInput.value) {
+                            resetPasscodeInput.value.focus();
+                        }
+                    });
+                };
+
+                const closeResetModal = () => {
+                    isResetModalOpen.value = false;
+                    resetForm.value.passcode = '';
+                    resetError.value = '';
+                    resetTargetNote.value = null;
+                };
+
+                const submitReset = async () => {
+                    if (isResetting.value || !resetForm.value.passcode) return;
+                    isResetting.value = true;
+                    resetError.value = '';
+
+                    const payload = {
+                        mode: resetForm.value.mode,
+                        passcode: resetForm.value.passcode,
+                        token: resetTargetNote.value ? resetTargetNote.value.token : (selectedNote.value ? selectedNote.value.token : null)
+                    };
+
+                    try {
+                        const res = await fetch('/api/studio/reset', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': getCsrfToken(),
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const data = await res.json();
+                        if (res.ok && data.success) {
+                            closeResetModal();
+                            resetSuccessMessage.value = data.message;
+                            setTimeout(() => { resetSuccessMessage.value = ''; }, 4500);
+                            await fetchNotes();
+                            if (data.note) {
+                                selectNote(data.note);
+                            }
+                        } else {
+                            resetError.value = data.message || 'Verification failed. Please check passcode.';
+                        }
+                    } catch (err) {
+                        console.error('Reset error:', err);
+                        resetError.value = 'Network error while attempting reset.';
+                    } finally {
+                        isResetting.value = false;
                     }
                 };
 
@@ -940,7 +1150,17 @@
                     formatStatus,
                     getStatusBadgeClass,
                     formatTime,
-                    formatWhatsApp
+                    formatWhatsApp,
+                    isResetModalOpen,
+                    isResetting,
+                    resetError,
+                    resetSuccessMessage,
+                    resetTargetNote,
+                    resetPasscodeInput,
+                    resetForm,
+                    openResetModal,
+                    closeResetModal,
+                    submitReset
                 };
             }
         }).mount('#app');
