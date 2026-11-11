@@ -214,7 +214,7 @@
                         <!-- Body Text Centered in Viewport -->
                         <div class="space-y-5 text-[14px] sm:text-[14.5px] leading-relaxed text-stone-700 font-light my-auto">
                             <p class="font-serif text-2xl sm:text-3xl font-semibold text-stone-900 tracking-tight mb-2">
-                                Hey,
+                                Hi Egha,
                             </p>
 
                             <p>
